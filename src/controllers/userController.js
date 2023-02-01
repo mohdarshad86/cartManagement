@@ -2,7 +2,7 @@ const express = require("express");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const aws = require("aws-sdk");
-const validation=require('../validations/validation')
+const validation = require("../validations/validation");
 
 aws.config.update({
   accessKeyId: "AKIAY3L35MCRZNIRGT6N",
@@ -25,7 +25,7 @@ let uploadFile = async (file) => {
       if (err) {
         return reject({ error: err });
       }
-      console.log(data);
+      //   console.log(data);
       console.log("file uploaded succesfully");
       return resolve(data.Location);
     });
@@ -36,9 +36,11 @@ const register = async (req, res) => {
   try {
     let userData = req.body;
 
-    let { fname, lname, email, profileImage, phone, password } =
+    let { fname, lname, email, profileImage, phone, password, address } =
       userData;
 
+    userData.address = JSON.parse(address);
+    console.log(userData.address);
     // const { shipping, billing } = address;
 
     // let { street, city, pincode } = shipping;
