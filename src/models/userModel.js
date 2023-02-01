@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema({
                 trim: true
             },
             pincode: {
-                type: String,
+                type: Number,
                 // required: true,
                 trim: true
             }

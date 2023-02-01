@@ -1,7 +1,7 @@
 //Name
 
 const validateName = (name) => {
-  return /^(?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i.test(name);
+  return /^[A-Z](?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i.test(name);
 };
 
 // Email
