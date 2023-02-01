@@ -3,34 +3,34 @@ const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema({
 
     fname: {
-        type: string,
+        type: String,
         required: true,
         trim: true
     },
     lname: {
-        type: string,
+        type: String,
         required: true,
         trim: true
     },
     email: {
-        type: string,
+        type: String,
         required: true,
         unique: true,
         trim: true
     },
     profileImage: {
-        type: string,
+        type: String,
         required: true,
         trim: true
     },
     phone: {
-        type: string,
+        type: String,
         required: true,
         unique: true, 
         trim: true
     },
     password: {
-        type: string,
+        type: String,
         required: true,
         trim: true,
         min: 8,
@@ -39,38 +39,38 @@ const userSchema = new mongoose.Schema({
     address: {
         shipping: {
             street: {
-                type: string,
+                type: String,
                 required: true,
                 trim: true
             },
             city: {
-                type: string,
+                type: String,
                 required: true,
                 trim: true
             },
             pincode: {
-                type: number,
+                type: Number,
                 required: true,
                 trim: true
             }
         },
         billing: {
             street: {
-                type: string,
+                type: String,
                 required: true,
                 trim: true
             },
             city: {
-                type: string,
+                type: String,
                 required: true,
                 trim: true
             },
             pincode: {
-                type: number,
+                type: Number,
                 required: true,
                 trim: true
             }
         }
     }},{timestamps: true})
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('user', userSchema)
