@@ -4,29 +4,35 @@ const userSchema = new mongoose.Schema({
 
     fname: {
         type: string,
-        required: true
+        required: true,
+        trim: true
     },
     lname: {
         type: string,
-        required: true
+        required: true,
+        trim: true
     },
     email: {
         type: string,
         required: true,
-        unique: true
+        unique: true,
+        trim: true
     },
     profileImage: {
         type: string,
-        required: true
+        required: true,
+        trim: true
     },
     phone: {
         type: string,
         required: true,
-        unique: true
+        unique: true, 
+        trim: true
     },
     password: {
         type: string,
         required: true,
+        trim: true,
         min: 8,
         max: 15
     }, // encrypted password
@@ -34,31 +40,37 @@ const userSchema = new mongoose.Schema({
         shipping: {
             street: {
                 type: string,
-                required: true
+                required: true,
+                trim: true
             },
             city: {
                 type: string,
-                required: true
+                required: true,
+                trim: true
             },
             pincode: {
                 type: number,
-                required: true
+                required: true,
+                trim: true
             }
         },
         billing: {
             street: {
                 type: string,
-                required: true
+                required: true,
+                trim: true
             },
             city: {
                 type: string,
-                required: true
+                required: true,
+                trim: true
             },
             pincode: {
                 type: number,
-                required: true
+                required: true,
+                trim: true
             }
         }
     }},{timestamps: true})
 
-module.exports = mongoose.model('user', userSchema)
+module.exports = mongoose.model('user', userSchema)
