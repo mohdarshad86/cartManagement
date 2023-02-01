@@ -19,6 +19,7 @@
   "homepage": "https://github.com/mohdarshad86/cartManagement#readme",
   "dependencies": {
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.9.0"
   }
 }
