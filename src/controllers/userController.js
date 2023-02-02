@@ -176,12 +176,14 @@ const register = async (req, res) => {
 
     // bycrypt part password in
 
-    const saltrounds = 10;
-    bcrypt.hash(password, saltrounds, function (err, hash) {
-      if (hash) userData.password = hash;
-      else return res.status(400).send({ status: false, message: "please send another password" })
-    })
+    // const saltrounds = 10;
+    // bcrypt.hash(password, saltrounds, function (err, hash) {
+    //   if (hash) userData.password = hash;
+    //   else return res.status(400).send({ status: false, message: "please send another password" })
+    // })
 
+    let hashing = bcrypt.hashSync(password, 10);
+    userData.password = hashing;
 
     //======================== address =============
 
@@ -294,14 +296,10 @@ const register = async (req, res) => {
         message: "shipping pincode  will be in number ",
       });
     }
-    // }
 
 
 
     //====== address billing ====
-
-    // if (address.billing) {
-    // checking .....
     if (!address.billing) {
       return res
         .status(400)
@@ -358,18 +356,13 @@ const register = async (req, res) => {
       });
     }
 
-
-
-
-    //====pincode
+    //====pincode============
 
     if (!address.billing.pincode) {
       return res
         .status(400)
         .send({ status: false, message: "billing pincode  is mandatory " });
     }
-
-    // address.billing.pincode = address.billing.pincode.trim();
 
     if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
 
@@ -386,12 +379,7 @@ const register = async (req, res) => {
         status: false,
         message: "billing pincode  will be in number ",
       });
-      // }
     }
-
-    // userData.address = JSON.parse(address);
-    console.log(userData.address);
-    // }
 
     //AWS
 
@@ -460,19 +448,20 @@ const loginUser = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please enter valid password" });
 
+    //       
+
     let isUserExist = await userModel.findOne({
-      email: email,
-      password: password,
+      email: email
     });
+
     if (!isUserExist)
       return res.status(404).send({
         status: false,
         message: "No user found with given credentials ",
       });
 
-    bcrypt.compare(password, isUserExist.password, function (err, matched) {
-      if (err) return res.status(400).send({ status: false, message: "Please enter valid password" })
-    })
+    let passwordCompare = await bcrypt.compare(password, isUserExist.password);
+    if (!passwordCompare) return res.status(400).send({ status: false, message: "Please enter valid password" })
 
     let token = jwt.sign(
       { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 120 },
@@ -491,25 +480,24 @@ const loginUser = async (req, res) => {
   }
 };
 
-
 const getUser = async function (req, res) {
   try {
-      let userId = req.params.userId
+    let userId = req.params.userId
 
-      if (!mongoose.isValidObjectId(userId))
-          return res.status(400).send({ status: false, message: "Please provide valid userId" })
+    if (!mongoose.isValidObjectId(userId))
+      return res.status(400).send({ status: false, message: "Please provide valid userId" })
 
-      let data = await userModel.findById(userId)
+    let data = await userModel.findById(userId)
 
-      if (!data) { return res.status(404).send({ status: false, message: "User is not found" }) }
-      
-     
-      return res.status(200).send({ status: true, message: "On success", data: data })
+    if (!data) { return res.status(404).send({ status: false, message: "User is not found" }) }
+
+
+    return res.status(200).send({ status: true, message: "On success", data: data })
 
   }
- catch (err) {
-  return res.status(500).send({ status: false, error: err.message });
-}
+  catch (err) {
+    return res.status(500).send({ status: false, error: err.message });
+  }
 }
 
 module.exports = { loginUser, register, getUser };
