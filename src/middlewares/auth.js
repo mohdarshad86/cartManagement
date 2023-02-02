@@ -15,11 +15,13 @@ const userModel = require('../models/userModel')
 
 const authentication = function(req,res,next){
     try {
-        let token = req.headers.authorization
+        let token = req.headers['authorization']
+        token = token.split(" ")
+        console.log(token[1])
         if(!token){
-            return res.status(404).send({status: false, message: "Token not resent"})
+            return res.status(404).send({status: false, message: "Token not present"})
         }
-        let decodedToken = jwt.verify(token,'project5')
+        let decodedToken = jwt.verify(token[1],'project5')
         if(!decodedToken){
             return res.status(401).send({status: false, message: 'invalid token'})
         }

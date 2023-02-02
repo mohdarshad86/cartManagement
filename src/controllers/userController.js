@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require('mongoose')
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt')
@@ -474,7 +475,7 @@ const loginUser = async (req, res) => {
     })
 
     let token = jwt.sign(
-      { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 5 },
+      { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 120 },
       "project5"
     );
 
@@ -490,4 +491,25 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { loginUser, register };
+
+const getUser = async function (req, res) {
+  try {
+      let userId = req.params.userId
+
+      if (!mongoose.isValidObjectId(userId))
+          return res.status(400).send({ status: false, message: "Please provide valid userId" })
+
+      let data = await userModel.findById(userId)
+
+      if (!data) { return res.status(404).send({ status: false, message: "User is not found" }) }
+      
+     
+      return res.status(200).send({ status: true, message: "On success", data: data })
+
+  }
+ catch (err) {
+  return res.status(500).send({ status: false, error: err.message });
+}
+}
+
+module.exports = { loginUser, register, getUser };
