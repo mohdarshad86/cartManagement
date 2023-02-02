@@ -102,6 +102,11 @@ const register = async (req, res) => {
         .status(400)
         .send({ status: false, message: "phone is mandatory" });
     }
+    if (typeof phone != "string") {
+      return res
+        .status(400)
+        .send({ status: false, message: "phone should be in string" });
+    }
 
     phone = userData.phone = phone.trim();
 
@@ -109,11 +114,6 @@ const register = async (req, res) => {
       return res
         .status(400)
         .send({ status: false, message: "Please enter phone" });
-    if (typeof phone != "string") {
-      return res
-        .status(400)
-        .send({ status: false, message: "phone should be in string" });
-    }
 
     if (!validation.validateMobileNo(phone)) {
       return res.status(400).send({
@@ -147,7 +147,12 @@ const register = async (req, res) => {
         .status(400)
         .send({ status: false, message: "password is mandatory" });
     }
-
+    
+    if (typeof password != "string") {
+      return res
+        .status(400)
+        .send({ status: false, message: "please provide password in string " });
+    }
     password = userData.password = password.trim();
 
     if (password == "") {
@@ -156,13 +161,8 @@ const register = async (req, res) => {
         .send({ status: false, message: "Please provide password value" });
     }
 
-    if (typeof password != "string") {
-      return res
-        .status(400)
-        .send({ status: false, message: "please provide password in string " });
-    }
 
-    //regex
+    //regex password
 
     if (!validation.validatePassword(password)) {
       return res.status(400).send({
@@ -172,24 +172,12 @@ const register = async (req, res) => {
       });
     }
 
-    //Profile image
-
-    // bycrypt part password in
-
-    // const saltrounds = 10;
-    // bcrypt.hash(password, saltrounds, function (err, hash) {
-    //   if (hash) userData.password = hash;
-    //   else return res.status(400).send({ status: false, message: "please send another password" })
-    // })
+    //Encrypting password
 
     let hashing = bcrypt.hashSync(password, 10);
     userData.password = hashing;
 
     //======================== address =============
-
-    //  there is two condition to take address 1 make it mandatory or optional like if(address){} then ....
-
-    //========= checking both condition ======
 
     address = userData.address = JSON.parse(address);
 
@@ -199,18 +187,13 @@ const register = async (req, res) => {
         .send({ status: false, message: "Address is mandatory " });
     }
 
-    // console.log(typeof address);
     if (typeof address != "object")
       return res.status(400).send({
         status: false,
         message: "Address should be in Object format ",
       });
 
-    // if (address) {
     // ======== address  shipping ============
-
-    // if (address.shipping) {
-    // checking.....
 
     if (!address.shipping) {
       return res
@@ -223,11 +206,19 @@ const register = async (req, res) => {
         status: false,
         message: "Address of shipping should be in Object format ",
       });
+
     // =========street validation=========
     if (!address.shipping.street) {
       return res
         .status(400)
-        .send({ status: false, message: "shipping street is mandatory " });
+        .send({ status: false, message: "Shipping street is mandatory " });
+    }
+
+    if (typeof address.shipping.street != "string") {
+      return res.status(400).send({
+        status: false,
+        message: "shipping street  will be in string ",
+      });
     }
 
     address.shipping.street = userData.address.shipping.street = address.shipping.street.trim()
@@ -239,20 +230,18 @@ const register = async (req, res) => {
       });
     }
 
-    if (typeof address.shipping.street != "string") {
-      return res.status(400).send({
-        status: false,
-        message: "shipping street  will be in string ",
-      });
-    }
-
-
     //========= city validation =========================
 
     if (!address.shipping.city) {
       return res
         .status(400)
         .send({ status: false, message: "shipping city is mandatory " });
+    }
+    if (typeof address.shipping.city != "string") {
+      return res.status(400).send({
+        status: false,
+        message: "shipping city will be in string ",
+      });
     }
 
     address.shipping.city = userData.address.shipping.city = address.shipping.city.trim();
@@ -263,13 +252,6 @@ const register = async (req, res) => {
         message: "Please provide shipping city value",
       })
     }
-    if (typeof address.shipping.city != "string") {
-      return res.status(400).send({
-        status: false,
-        message: "shipping city will be in string ",
-      });
-    }
-    //validate city
 
     //====pincode
 
@@ -282,14 +264,7 @@ const register = async (req, res) => {
 
     // address.shipping.pincode = userData.address.shipping.pincode =  address.shipping.pincode.trim(); 
     if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
-
-    if (address.shipping.pincode == "") {
-      return res.status(400).send({
-        status: false,
-        message: "Please provide shipping pincode value",
-      })
-    }
-
+    
     if (typeof address.shipping.pincode != "number") {
       return res.status(400).send({
         status: false,
@@ -297,7 +272,12 @@ const register = async (req, res) => {
       });
     }
 
-
+    if (address.shipping.pincode == "") {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide shipping pincode value",
+      })
+    }
 
     //====== address billing ====
     if (!address.billing) {
@@ -318,13 +298,13 @@ const register = async (req, res) => {
         .status(400)
         .send({ status: false, message: "billing street is mandatory " });
     }
+
     if (typeof address.billing.street != "string") {
       return res.status(400).send({
         status: false,
         message: "billing street  will be in string ",
       });
     }
-
     address.billing.street = address.billing.street.trim();
 
     if (address.billing.street == "") {
@@ -341,6 +321,13 @@ const register = async (req, res) => {
         .send({ status: false, message: "billing city  is mandatory " });
     }
 
+    if (typeof address.shipping.city != "string") {
+      return res.status(400).send({
+        status: false,
+        message: "billing city  will be in string ",
+      });
+    }
+
     address.billing.city = address.billing.city.trim();
 
     if (address.billing.city == "") {
@@ -348,12 +335,6 @@ const register = async (req, res) => {
         status: false,
         message: "Please provide billing city value",
       })
-    }
-    if (typeof address.shipping.city != "string") {
-      return res.status(400).send({
-        status: false,
-        message: "billing city  will be in string ",
-      });
     }
 
     //====pincode============
@@ -364,22 +345,22 @@ const register = async (req, res) => {
         .send({ status: false, message: "billing pincode  is mandatory " });
     }
 
-    if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
-
-
-    if (address.billing.pincode == "") {
-      return res.status(400).send({
-        status: false,
-        message: "Please provide billing pincode value",
-      })
-    }
-
+    
     if (typeof address.shipping.pincode != "number") {
       return res.status(400).send({
         status: false,
         message: "billing pincode  will be in number ",
       });
     }
+    
+    if (address.billing.pincode == "") {
+      return res.status(400).send({
+        status: false,
+        message: "Please provide billing pincode value",
+      })
+    }
+    
+    if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
 
     //AWS
 
