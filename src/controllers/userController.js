@@ -407,7 +407,7 @@ const loginUser = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please enter valid Email" });
 
-    if (!password )
+    if (!password)
       return res
         .status(400)
         .send({ status: false, message: "Please enter password" });
@@ -490,7 +490,7 @@ const UpdateUser = async function (req, res) {
     let profileImage = req.files;
 
     if (profileImage) userData.length += 1
-    
+
 
     if (Object.keys(userData).length == 0) {
       return res.status(400).send({ status: false, message: "Please provide some data to update user" })
@@ -547,10 +547,16 @@ const UpdateUser = async function (req, res) {
 
       email = userData.email = email.trim()
 
-      userExist = await userModel.findOne({ $or: [{ email: email, phone: phone }] })
-      if (userExist.email == email) // check 
-        return res.status(400).send({ status: false, message: "email is  already exists" })
+     let userExist = await userModel.findOne({ $or: [{ email: email}, {phone: phone }] })
+
+      console.log(userExist);
+      if (userExist) {
+        if (userExist.email == email) // check 
+          return res.status(400).send({ status: false, message: "email is  already exists" })
+      }
     }
+
+
     //============================== phone
     if (phone) {
 
@@ -559,8 +565,11 @@ const UpdateUser = async function (req, res) {
       if (phone == "") return res.status(400).send({ status: false, message: "Please provide value of phone" })
 
       phone = userData.phone = phone.trim()
-      if (userExist.phone == phone) // check 
+      
+      if (userExist) {
+        if (userExist.phone == phone) // check 
         return res.status(400).send({ status: false, message: "phone is  already exists" })
+      }
     }
 
     //============================  password

@@ -180,11 +180,13 @@ const getProduct = async (req, res) => {
         let data = req.query
         let { size, name, priceGreaterThan, priceLessThan } = data
 
-        if (Object.values(data).length == undefined) {
-            return res.status(400).send({ status: false, message: "query" });
+        let abc=Object.keys(data)
+        for(i of abc){            
+            if (data[i].trim()=="") 
+                return res.send(`${i} can not be Empty`)
         }
 
-        let expectedQueries = ["size", "name", "priceGreaterThan", "priceLessThan",];
+        let expectedQueries = ["size", "name", "priceGreaterThan", "priceLessThan"];
         let queries = Object.keys(data);
         let count = 0;
         for (let i = 0; i < queries.length; i++) {
@@ -195,47 +197,38 @@ const getProduct = async (req, res) => {
 
         let filter = { isDeleted: false, }
 
-        console.log(data, req.query.length);
-
         if (name ) {
 
             if (typeof name != "string")
                 return res.status(400).send({ status: false, message: "name string should be in string" });
-
-            name = data.name = name.trim();
-
-            if (name == "")
-                return res.status(400).send({ status: false, message: "Please Enter name value" });
 
             filter.title = name
         }
 
         if (size ) {
 
-            if (typeof availableSizes != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
+            if (typeof size != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
+
 
             let temp = []
-            let size = availableSizes.split(",").map(x => x.trim())
+            let sizes = size.split(",").map(x => x.trim())
 
-            if (size.length == 0)
-                return res.status(400).send({ status: false, message: "Please Enter name value" });
-
-            temp = size
-            size.forEach((size) => {
-                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(size))) {
+            temp = sizes
+            sizes.forEach((i) => {
+                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(i))) {
                     return res.status(400).send({ status: false, message: `Please Enter sizes S, XS, M, XL, XXL, L ` })
                 }
-                filter.availableSizes = temp
+                data.size = temp
             })
 
-            // filter.availableSizes = size
+            filter.availableSizes = sizes
         }
 
         if (priceGreaterThan ) filter['price'] = { $gt: priceGreaterThan }
 
         if (priceLessThan ) filter['price'] = { ...filter['price'], $lt: priceLessThan }
 
-        console.log(filter);
+        // console.log(filter);
 
         let getProduct = await productModel.find(filter).sort({ price: 1 })
 
@@ -244,7 +237,7 @@ const getProduct = async (req, res) => {
         return res.status(200).send({ status: true, message: 'Success', data: getProduct })
 
     } catch (error) {
-        return res.status(404).send({ status: false, message: error.message })
+        return res.status(500).send({ status: false, message: error.message })
     }
 }
 
