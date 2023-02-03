@@ -15,4 +15,11 @@ router.put('/user/:userId/profile',aws.awsUpdate, auth.authentication, auth.auth
 //PRODUCT
 router.post("/products",aws.awsProduct, productController.createProduct);
 router.get("/products", productController.getProduct);
+router.get('/products/:productId', productController.getProductById)
+router.delete('/products/:productId',  productController.deleteProduct)
+
+router.all('*/', function(req, res){
+    return res.status(400).send({status:false, message:"Invalid Path"})
+})
+
 module.exports = router;
