@@ -38,4 +38,14 @@ const awsLink = async (req, res, next) => {
     catch (err) { return res.status(500).send({ status: false, error: err.message }) }
 }
 
-module.exports={awsLink}
+const awsUpdate = async (req, res, next) => {
+    try {
+        let profileImage = req.files;
+        if (Object.keys(profileImage).length == 0) return next()
+        let image = await uploadFile(profileImage[0]);
+        req.image = image;
+        next()
+    }
+    catch (err) { return res.status(500).send({ status: false, error: err.message }) }
+}
+module.exports={awsLink, awsUpdate}

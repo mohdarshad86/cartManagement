@@ -407,7 +407,7 @@ const loginUser = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please enter valid Email" });
 
-    if (!password || (password != undefined && typeof password != "string"))
+    if (!password )
       return res
         .status(400)
         .send({ status: false, message: "Please enter password" });
@@ -445,7 +445,7 @@ const loginUser = async (req, res) => {
     if (!passwordCompare) return res.status(400).send({ status: false, message: "Please enter valid password" })
 
     let token = jwt.sign(
-      { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 12000 },
+      { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 12000000 },
       "project5"
     );
 
