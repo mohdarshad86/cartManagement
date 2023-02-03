@@ -1,7 +1,8 @@
 const productModel = require('../models/productModel')
 
 const createProduct = async (req, res) => {
-    const productData = req.body
+    try {
+        const productData = req.body
 
     let { title, description, price, currencyId, currencyFormat, style, availableSizes, installments, } = productData
 
@@ -164,7 +165,38 @@ const createProduct = async (req, res) => {
 
     let createProduct = await productModel.create(productData)
     return res.status(201).send({ status: false, data: createProduct })  // right formet me response likhna h 
+    } catch (error) {
+        return res.status(404).send({ status: false, message: error.message })
+    }
+}
+
+const getProduct = async (req, res) => {
+
+    try {
+        let data = req.query
+        let { size, name, priceGreaterThan, priceLessThan } = data
+
+        let filter = { isDeleted: false }
+
+        if (name) filter.title = name
+
+        if (size) filter.availableSizes = size
+
+        if (priceGreaterThan) filter['price'] = { $gt: priceGreaterThan }
+
+        if (priceLessThan) filter['price'] = { ...filter['price'], $lt: priceLessThan }
+
+        console.log(filter);
+
+        let getProduct = await productModel.find(filter).sort({ price: 1 })
+
+        if (getProduct.length == 0) return res.status(404).send({ status: false, message: "No Product for this Filter" })
+        return res.status(200).send({ status: true, message: 'Success', data: getProduct })
+
+    } catch (error) {
+        return res.status(404).send({ status: false, message: error.message })
+  }
 }
 
 
-module.exports = { createProduct }
+module.exports = { createProduct, getProduct }

@@ -14,4 +14,5 @@ router.put('/user/:userId/profile',aws.awsUpdate, auth.authentication, auth.auth
 
 //PRODUCT
 router.post("/products",aws.awsProduct, productController.createProduct);
+router.get("/products", productController.getProduct);
 module.exports = router;
