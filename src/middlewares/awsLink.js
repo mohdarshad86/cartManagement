@@ -48,4 +48,16 @@ const awsUpdate = async (req, res, next) => {
     }
     catch (err) { return res.status(500).send({ status: false, error: err.message }) }
 }
-module.exports={awsLink, awsUpdate}
+
+const awsProduct = async (req, res, next) => {
+    try {
+        let productImage = req.files;
+        if (Object.keys(productImage).length == 0) return res.status(400).send({ status: false, message: "Please upload Profile Image" });
+        let image = await uploadFile(productImage[0]);
+        req.image = image;
+        next()
+    }
+    catch (err) { return res.status(500).send({ status: false, error: err.message }) }
+}
+
+module.exports={awsLink, awsUpdate, awsProduct}
