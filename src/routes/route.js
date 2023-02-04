@@ -16,6 +16,7 @@ router.put('/user/:userId/profile',aws.awsUpdate, auth.authentication, auth.auth
 router.post("/products",aws.awsProduct, productController.createProduct);
 router.get("/products", productController.getProduct);
 router.get('/products/:productId', productController.getProductById)
+router.put('/products/:productId',aws.awsUpdate, productController.updateProduct)
 router.delete('/products/:productId',  productController.deleteProduct)
 
 router.all('*/', function(req, res){

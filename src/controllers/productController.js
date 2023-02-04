@@ -292,6 +292,157 @@ const getProductById = async (req, res) => {
     }
 }
 
+// ### PUT /products/:productId
+// - Updates a product by changing at least one or all fields
+// - Check if the productId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like [this](#error-response-structure)
+// - _Response format_
+//   - *On success* - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like [this](#successful-response-structure)
+//   - *On error* - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+
+const updateProduct = async (req, res) => {
+
+    try {
+
+
+        let productId = req.params.productId
+        let data = req.body
+        let { title, description, price, style, availableSizes, installments } = data
+
+        let productImage = req.files
+
+
+        if (Object.keys(data).length !== 0) {
+
+
+            console.log(title)
+            let abc = Object.keys(data)
+            for (i of abc) {
+                if (data[i].trim() == "")
+                    return res.send({ status: false, message: `${i} can not be Empty` })
+            }
+        }
+
+        if (productImage) {
+            data.length += 1
+        }
+
+
+        if (Object.keys(data).length == 0) {
+            return res.status(400).send({ status: false, message: "Please provide some value" })
+        }
+
+        if (!isValidObjectId(productId))
+            return res.status(400).send({ status: false, message: "Invalid product Id " })
+
+        const getProducts = await productModel.findOne({ _id: productId, isDeleted: false })
+
+        if (!getProducts)
+            return res.status(404).send({ status: false, message: "No product found" })
+
+        if (title) {
+            if (typeof title != "string") {
+                return res.status(400).send({ status: false, message: "title should be in string" });
+            }
+
+
+            // regex  ==================================== remains
+
+            let titleExist = await productModel.findOne({ title: title })
+            if (titleExist) return res.status(400).send({ status: true, message: "This title is already exist in" })
+
+        }
+
+
+
+        if (description) {
+            if (typeof description != "string") {
+                return res
+                    .status(400)
+                    .send({ status: false, message: "description should be in string" });
+            }
+        }
+
+
+
+        //=============================== price validation =============
+
+        if (price) {
+            price = data.price = Number(price)
+
+            if (isNaN(price) || typeof price != "number") return res.status(400).send({ status: false, message: "price should be in number" });
+
+
+            // =============== regex  valid number ======================
+
+            price = data.price = price.toFixed(2)
+        }
+
+        //========================= productImage ========
+
+        if (productImage) {
+
+            productImage = req.files
+
+            if (!productImage) { return res.status(400).send({ status: false, message: "please provide productImage" }) }
+
+            data.productImage = req.image
+
+        }
+
+
+        //=============================  style: {string},
+
+        if (style) {
+
+            if (typeof style != "string") {
+                return res
+                    .status(400)
+                    .send({ status: false, message: "style should be in string" });
+            }
+
+
+        }
+
+        if (availableSizes) {
+
+            // availableSizes = JSON.parse(availableSizes) DOUBT
+            if (typeof availableSizes != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
+
+
+            let temp = []
+            let size = availableSizes.split(",").map(x => x.trim())
+
+            temp = size
+            size.forEach((size) => {
+                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(size))) {
+                    return res.status(400).send({ status: false, message: `Please Enter sizes S, XS, M, XL, XXL, L ` })
+                }
+                data.availableSizes = temp
+            })
+        }
+
+        // ==== installments: {number}
+
+        if (installments) {
+
+            installments = data.installments = Number(installments)
+
+            if (isNaN(installments) || typeof installments != "number") return res.status(400).send({ status: false, message: "installments should be in number" });
+
+            // what is use to (should we use regex )
+
+        }
+
+        let updateData = await productModel.findOneAndUpdate({ _id: productId }, { $set: { title: title, description: description, price: price, style: style, productImage: req.image, availableSizes: availableSizes, installments: installments } }, { new: true })
+        return res.status(200).send({ status: true, message: "Successfully updated", data: updateData })
+
+
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message })
+    }
+
+}
+
 const deleteProduct = async function (req, res) {
     try {
         const productId = req.params.productId
