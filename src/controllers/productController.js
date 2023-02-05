@@ -184,7 +184,7 @@ const getProduct = async (req, res) => {
         let abc = Object.keys(data)
         for (i of abc) {
             if (data[i].trim() == "")
-                return res.send({ status: false, message: `${i} can not be Empty` })
+                return res.status(400).send({ status: false, message: `${i} can not be Empty` })
         }
 
         let expectedQueries = ["size", "name", "priceGreaterThan", "priceLessThan", "priceSort"];
@@ -255,6 +255,7 @@ const getProduct = async (req, res) => {
             }
 
             let getProduct = await productModel.find(filter).sort({ price: priceSort })
+
             if (getProduct.length == 0) return res.status(404).send({ status: false, message: "No Product for this Filter" })
 
             return res.status(200).send({ status: true, message: 'Success', data: getProduct })
@@ -302,7 +303,6 @@ const getProductById = async (req, res) => {
 const updateProduct = async (req, res) => {
 
     try {
-
 
         let productId = req.params.productId
         let data = req.body
@@ -434,6 +434,7 @@ const updateProduct = async (req, res) => {
         }
 
         let updateData = await productModel.findOneAndUpdate({ _id: productId }, { $set: { title: title, description: description, price: price, style: style, productImage: req.image, availableSizes: availableSizes, installments: installments } }, { new: true })
+        
         return res.status(200).send({ status: true, message: "Successfully updated", data: updateData })
 
 

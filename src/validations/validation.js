@@ -35,7 +35,7 @@ const validatePincode = (pincode) => {
 //Place
 
 const validatePlace = (value) => {
-  return /^[^\W\d_]+\.?(?:[-\s'’][^\W\d_]+\.?)*$/.test(value);
+  return /^[^\W\d_]+\.?(?:[-\s'][^\W\d_]+\.?)*$/.test(value);
 };
 
 module.exports = {
