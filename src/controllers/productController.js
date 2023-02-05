@@ -1,5 +1,6 @@
 const productModel = require('../models/productModel')
 const { isValidObjectId } = require('mongoose')
+const isValid=require('../validations/validation')
 
 const createProduct = async (req, res) => {
     try {
@@ -7,20 +8,23 @@ const createProduct = async (req, res) => {
 
         let { title, description, price, currencyId, currencyFormat, style, availableSizes, installments, } = productData
 
+        if (Object.keys(productData).length == 0)
+            return res.status(400).send({ status: false, message: "please provide required fields" });
+
         //===========  title  ===========
 
         if (!title) { return res.status(400).send({ status: false, message: "please provide title" }) }
 
-        if (typeof title != "string") {
+        if (typeof title != "string")
             return res.status(400).send({ status: false, message: "title should be in string" });
-        }
 
         title = productData.title = title.trim();
 
         if (title == "")
             return res.status(400).send({ status: false, message: "Please Enter title value" });
 
-        // regex  ==================================== remains
+        if (!isValid.validateTitle(title))
+            return res.status(400).send({ status: false, message: "Please Enter  valid title" });
 
         let titleExist = await productModel.findOne({ title: title })
         if (titleExist) return res.status(400).send({ status: true, message: "This title is already exist in" })
@@ -31,17 +35,16 @@ const createProduct = async (req, res) => {
         if (!description) { return res.status(400).send({ status: false, message: "please provide description" }) }
 
         if (typeof description != "string") {
-            return res
-                .status(400)
-                .send({ status: false, message: "description should be in string" });
+            return res.status(400).send({ status: false, message: "description should be in string" });
         }
 
         description = productData.description = description.trim();
 
         if (description == "")
-            return res
-                .status(400)
-                .send({ status: false, message: "Please Enter description value" });
+            return res.status(400).send({ status: false, message: "Please Enter description value" });
+
+        if (!isValid.validateTitle(description))
+            return res.status(400).send({ status: false, message: "Please Enter  valid description" });
 
         //=============================== price validation =============
 
@@ -54,29 +57,23 @@ const createProduct = async (req, res) => {
 
         if (isNaN(price) || typeof price != "number") return res.status(400).send({ status: false, message: "price should be in number" });
 
-        // =============== regex  valid number ======================
-
+        if (!isValid.validatePrice(price)) return res.status(400).send({ status: false, message: "please provide valid price" })
         price = productData.price = price.toFixed(2)
 
-        //200 
         // ============================== currencyId: {string, mandatory, INR} =====
 
         if (!currencyId) return res.status(400).send({ status: false, message: "please provide currencyId" })
 
-        if (typeof currencyId != "string") {
-            return res
-                .status(400)
-                .send({ status: false, message: "currencyId should be in string" });
-        }
+        if (typeof currencyId != "string")
+            return res.status(400).send({ status: false, message: "currencyId should be in string" });
+
 
         currencyId = productData.currencyId = currencyId.trim();
 
         if (currencyId == "")
-            return res
-                .status(400)
-                .send({ status: false, message: "Please Enter currencyId value" });
+            return res.status(400).send({ status: false, message: "Please Enter currencyId value" });
 
-        if (productData.currencyId != "INR") { return res.status(400).send({ status: false, message: "opps enter INR " }) }
+        if (productData.currencyId != "INR") return res.status(400).send({ status: false, message: "opps enter INR " })
 
 
         //==========================  currencyFormat {string, mandatory, Rupee symbol},
@@ -84,20 +81,14 @@ const createProduct = async (req, res) => {
 
         if (!currencyFormat) { return res.status(400).send({ status: false, message: "please provide currencyFormat" }) }
 
-        if (typeof currencyFormat != "string") {
-            return res
-                .status(400)
-                .send({ status: false, message: "currencyFormat should be in string" });
-        }
-
+        if (typeof currencyFormat != "string")
+            return res.status(400).send({ status: false, message: "currencyFormat should be in string" });
         currencyFormat = productData.currencyFormat = currencyFormat.trim();
 
         if (currencyFormat == "")
-            return res
-                .status(400)
-                .send({ status: false, message: "Please Enter currencyFormat value" });
+            return res.status(400).send({ status: false, message: "Please Enter currencyFormat value" });
 
-        if (productData.currencyFormat != "₹") { return res.status(400).send({ status: false, message: "Please enter ₹ " }) }
+        if (productData.currencyFormat != "₹") return res.status(400).send({ status: false, message: "Please enter ₹ " })
 
         //========================= productImage ========
 
@@ -110,51 +101,49 @@ const createProduct = async (req, res) => {
 
         //=============================  style: {string},
 
-        if (style) {
+        if (style || Object.values(style).length == 0) {
 
-            if (typeof style != "string") {
-                return res
-                    .status(400)
-                    .send({ status: false, message: "style should be in string" });
-            }
-
+            if (typeof style != "string")
+                return res.status(400).send({ status: false, message: "style should be in string" });
             style = productData.style = style.trim();
 
-            if (style == "")
-                return res
-                    .status(400)
-                    .send({ status: false, message: "Please Enter style value" });
+            if (Object.values(style).length == 0 || style == "")
+                return res.status(400).send({ status: false, message: "Please Enter style value" });
+
+            if (!isValid.validateTitle(style))
+                return res.status(400).send({ status: false, message: "Please Enter  valid style" });
         }
 
         //=======================availableSizes: {array of string, at least one size, enum["S", "XS","M","X", "L","XXL", "XL"]}
 
-        if (availableSizes) {
 
-            // availableSizes = JSON.parse(availableSizes) DOUBT
+        if (availableSizes || Object.values(availableSizes)==0) {
+            let count=0;
             if (typeof availableSizes != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
 
+            availableSizes= productData.availableSizes=productData.availableSizes.trim()
+
+            if (availableSizes == null || availableSizes == undefined || Object.values(availableSizes).length == 0) 
+                return res.status(400).send({ status: false, message: `Please Enter at least one size` })
 
             let temp = []
             let size = availableSizes.split(",").map(x => x.trim())
 
             temp = size
             size.forEach((size) => {
-                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(size))) {
-                    return res.status(400).send({ status: false, message: `Please Enter sizes S, XS, M, XL, XXL, L ` })
-                }
-                productData.availableSizes = temp
+                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(size))) count++;
             })
-        }
+            if(count>0) return res.status(400).send({ status: false,message: "Size can only contain S, XS, M, XL, XXL, L"})
 
+            productData.availableSizes = temp
+
+    }
         // ==== installments: {number}
 
         if (installments) {
 
-            if (typeof installments != "string") {
-                return res
-                    .status(400)
-                    .send({ status: false, message: "style should be in string" });
-            }
+            if (typeof installments != "string")
+                return res.status(400).send({ status: false, message: "style should be in string" });
 
             installments = productData.installments = installments.trim()
 
@@ -164,14 +153,14 @@ const createProduct = async (req, res) => {
 
             if (typeof installments != "number") return res.status(400).send({ status: false, message: "installments should be in number" });
 
-            // what is use to (should we use regex )
+            if (!isValid.validateInstallments(installments)) return res.status(400).send({ status: false, message: "please provide valid installment" })
 
         }
 
         let createProduct = await productModel.create(productData)
         return res.status(201).send({ status: false, data: createProduct })
     } catch (error) {
-        return res.status(500).send({ status: false, message: error.message })
+        return res.status(500).send({ status: false, message: error.message})
     }
 }
 
@@ -199,7 +188,6 @@ const getProduct = async (req, res) => {
         let filter = { isDeleted: false, }
 
         if (name) {
-
             if (typeof name != "string")
                 return res.status(400).send({ status: false, message: "name string should be in string" });
 
@@ -207,9 +195,7 @@ const getProduct = async (req, res) => {
         }
 
         if (size) {
-
             if (typeof size != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
-
 
             let temp = []
             let sizes = size.split(",").map(x => x.trim())
@@ -245,23 +231,20 @@ const getProduct = async (req, res) => {
             filter['price'] = { ...filter['price'], $lt: priceLessThan }
         }
 
+        let sort = 1
         if (priceSort) {
 
             priceSort = data.priceSort = priceSort.trim()
             priceSort = data.priceSort = Number(priceSort)
 
-            if (priceSort !== 1 && priceSort !== (-1)) {
+            if (isNaN(priceSort) || priceSort !== 1 && priceSort !== (-1)) {
                 return res.status(404).send({ status: false, message: "sortPrice can only contain +1(Ascending) & -1(Descending)" })
             }
 
-            let getProduct = await productModel.find(filter).sort({ price: priceSort })
-
-            if (getProduct.length == 0) return res.status(404).send({ status: false, message: "No Product for this Filter" })
-
-            return res.status(200).send({ status: true, message: 'Success', data: getProduct })
+            sort = priceSort
         }
 
-        let getProduct = await productModel.find(filter).sort({ price: 1 })
+        let getProduct = await productModel.find(filter).sort({ price: sort })
 
         if (getProduct.length == 0) return res.status(404).send({ status: false, message: "No Product for this Filter" })
 
@@ -348,18 +331,13 @@ const updateProduct = async (req, res) => {
             // regex  ==================================== remains
 
             let titleExist = await productModel.findOne({ title: title })
-            if (titleExist) return res.status(400).send({ status: true, message: "This title is already exist in" })
+            if (titleExist) return res.status(400).send({ status: true, message: "This title is already exist please send another title" })
 
         }
 
-
-
         if (description) {
-            if (typeof description != "string") {
-                return res
-                    .status(400)
-                    .send({ status: false, message: "description should be in string" });
-            }
+            if (typeof description != "string") 
+                return res.status(400).send({ status: false, message: "description should be in string" });
         }
 
 

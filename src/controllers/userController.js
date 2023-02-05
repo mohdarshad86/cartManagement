@@ -44,14 +44,15 @@ const register = async (req, res) => {
     lname = userData.lname = lname.trim();
     if (lname == "")
       return res.status(400).send({ status: false, message: "Please enter last name value" });
+
     if (!validation.validateName(lname))
-      return res.status(400).send({ status: false, message: "please provide valid last  name " });
-    
+      return res.status(400).send({ status: false, message: "Please provide valid last name " });    
 
     //================================ email ======
 
     if (!email)
       return res.status(400).send({ status: false, message: "email is mandatory" });
+
     if (typeof email != "string")
       return res.status(400).send({ status: false, message: "email id  should be in string" });
 
@@ -59,19 +60,20 @@ const register = async (req, res) => {
 
     email = userData.email = email.trim();
     if (email == "")
-      return res.status(400).send({ status: false, message: "Please enter email" });
+      return res.status(400).send({ status: false, message: "Please enter email value" });
+
     if (!validation.validateEmail(email))
-      return res.status(400).send({ status: false, message: "please provide valid email id" });
+      return res.status(400).send({ status: false, message: "Please provide valid email id" });
 
     //======= phone =============
 
     if (!phone)
       return res.status(400).send({ status: false, message: "phone is mandatory" });
+
     if (typeof phone != "string")
       return res.status(400).send({ status: false, message: "phone should be in string" });
 
     phone = userData.phone = phone.trim();
-
     if (phone == "")
       return res.status(400).send({ status: false, message: "Please enter phone" });
 
@@ -114,13 +116,13 @@ const register = async (req, res) => {
     userData.password = hashing;
 
     //======================== address =============
-
+    // console.log(typeof address);
+    if (!address)
+    return res.status(400).send({ status: false, message: "Address is mandatory " });
+    
     address = userData.address = JSON.parse(address);
 
-    if (!address)
-      return res.status(400).send({ status: false, message: "Address is mandatory " });
-
-    if (typeof address != "object")
+    if (typeof address != "object" )
       return res.status(400).send({ status: false, message: "Address should be in Object format " });
 
     // ======== address  shipping ============
@@ -128,10 +130,10 @@ const register = async (req, res) => {
     if (!address.shipping)
       return res.status(400).send({ status: false, message: "Shipping Address is mandatory " });
 
+      // address.shipping = userData.address.shipping = JSON.parse(address.shipping);
+
     if (typeof address.shipping != "object")
-      return res.status(400).send({
-        status: false, message: "Address of shipping should be in Object format ",
-      });
+      return res.status(400).send({status: false, message: "Address of shipping should be in Object format ",});
 
     // =========street validation=========
     if (!address.shipping.street)
@@ -344,7 +346,6 @@ const getUser = async function (req, res) {
 const UpdateUser = async function (req, res) {
 
   try {
-
     const userId = req.params.userId
     let userData = req.body
     let { fname, lname, email, phone, password, address } = userData
@@ -353,12 +354,16 @@ const UpdateUser = async function (req, res) {
 
     if (profileImage) userData.length += 1
 
+    let abc = Object.keys(userData)
+        for (i of abc) {
+            if (userData[i].trim() == "")
+                return res.status(400).send({ status: false, message: `${i} can not be Empty` })
+        }
 
     if (Object.keys(userData).length == 0) 
       return res.status(400).send({ status: false, message: "Please provide some data to update user" })
 
     //=============================================== fname
-
     if (fname) {
       if (typeof fname != "string") 
         return res.status(400).send({ status: false, message: "first name should be in string" });
@@ -379,7 +384,7 @@ const UpdateUser = async function (req, res) {
       lname = userData.lname = lname.trim();
 
       if (lname == "") return res.status(400).send({ status: false, message: "Please enter last name value" });
-      
+
       if (!validation.validateName(lname)) {
         return res.status(400).send({ status: false, message: "please provide valid last  name " });
       }
@@ -485,25 +490,24 @@ const UpdateUser = async function (req, res) {
 
           if (address.billing.pincode) {
 
+            if (!validation.validatePincode(address.billing.pincode)) { return res.status(400).send({ status: false, message: "Please provide valid billing pincode" }) }
+
             if (typeof address.billing.pincode != "number") {
               return res.status(400).send({
-                status: false, message: "billing pincode  will be in number ",
+                status: false, message: "Billing pincode  will be in number ",
               });
             }
 
-            if (!validation.validatePincode(address.billing.pincode)) { return res.status(400).send({ status: false, message: "please provide valid billing pincode" }) }
-
-            if (address.billing.pincode == "") {
+            if (address.billing.pincode == "") 
               return res.status(400).send({
                 status: false, message: "Please provide billing pincode value",
               })
-            }
           }
         }
       }
     }
 
-    // progile image
+    // profile image
     profileImage = userData.profileImage = req.image
 
     const updatedUser = await userModel.findByIdAndUpdate({ _id: userId },

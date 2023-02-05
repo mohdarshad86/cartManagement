@@ -20,7 +20,7 @@ const authentication = function(req,res,next){
         req.userId = decodedToken.userId
         next()
     } catch (error) {
-        res.status(500).send({status: false, message: error.message})
+       return res.status(500).send({status: false, message: error.message})
     }
 }
 
@@ -46,7 +46,7 @@ const authorization = async function(req,res,next){
         next()
 
     } catch (error) {
-         res.status(500).send({status: false, message: error.message})
+        return res.status(500).send({status: false, message: error.message})
     }
 }
 
