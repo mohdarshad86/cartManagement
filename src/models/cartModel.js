@@ -4,9 +4,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId;
 const cartSchema = new mongoose.Schema(
     {
         userId: {
-            type: ObjectId,
-            // unique: true
-
+            type: ObjectId
         },
         items: [{
             productId: {

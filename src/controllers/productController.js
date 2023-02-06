@@ -381,23 +381,27 @@ const updateProduct = async (req, res) => {
 
         }
 
-        if (availableSizes) {
-
-            // availableSizes = JSON.parse(availableSizes) DOUBT
+        if (availableSizes || Object.values(availableSizes)==0) {
+            let count=0;
             if (typeof availableSizes != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
 
+            availableSizes= data.availableSizes=data.availableSizes.trim()
+
+            if (availableSizes == null || availableSizes == undefined || Object.values(availableSizes).length == 0) 
+                return res.status(400).send({ status: false, message: `Please Enter at least one size` })
 
             let temp = []
-            let size = availableSizes.split(",").map(x => x.trim())
+            let size = availableSizes.split(",").map(x=>x.trim())
 
             temp = size
             size.forEach((size) => {
-                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(size))) {
-                    return res.status(400).send({ status: false, message: `Please Enter sizes S, XS, M, XL, XXL, L ` })
-                }
-                data.availableSizes = temp
+                if (!(["S", "XS", "M", "XL", "XXL", "L"].includes(size))) count++;
             })
-        }
+            if(count>0) return res.status(400).send({ status: false,message: "Size can only contain S, XS, M, XL, XXL, L"})
+
+            data.availableSizes = temp
+
+    }
 
         // ==== installments: {number}
 
