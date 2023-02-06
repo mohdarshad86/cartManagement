@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const productController=require("../controllers/productController")
+const cartController=require("../controllers/cartController")
 const auth = require('../middlewares/auth')
 const aws = require("../middlewares/awsLink");
 
@@ -18,6 +19,11 @@ router.get("/products", productController.getProduct);
 router.get('/products/:productId', productController.getProductById)
 router.put('/products/:productId',aws.awsUpdate, productController.updateProduct)
 router.delete('/products/:productId',  productController.deleteProduct)
+
+//Cart
+router.post("/users/:userId/cart", cartController.createCart);
+
+
 
 router.all('*/', function(req, res){
     return res.status(400).send({status:false, message:"Invalid Path"})

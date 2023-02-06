@@ -265,6 +265,12 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 }
 ```
 
+{
+  "userId":"2345tgbhnjm,kl",
+  "productId":"2345rtfghjkl",
+  "quantity":"2"
+}
+
 
 ## Cart APIs (_authentication required as authorization header - bearer token_)
 ### POST /users/:userId/cart (Add to cart)
