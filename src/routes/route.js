@@ -22,6 +22,7 @@ router.delete('/products/:productId',  productController.deleteProduct)
 
 //Cart
 router.post("/users/:userId/cart", cartController.createCart);
+router.put("/users/:userId/cart", cartController.updateCart);
 
 
 

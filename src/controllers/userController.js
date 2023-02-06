@@ -83,13 +83,12 @@ const register = async (req, res) => {
     const userExist = await userModel.findOne({ $or: [{ email: email }, { phone: phone }] });
 
     if (userExist) {
-      if (userExist.email == email) {
-        return res.status(400).send({ status: false, message: "email id  already exist" });
-      }
+      if (userExist.email == email) 
+        return res.status(400).send({ status: false, message: "email id  already exist" });     
 
-      if (userExist.phone == phone) {
+      if (userExist.phone == phone) 
         return res.status(400).send({ status: false, message: "phone  already exist" });
-      }
+      
     }
 
     //========= password ======
@@ -122,6 +121,9 @@ const register = async (req, res) => {
     
     address = userData.address = JSON.parse(address);
 
+    if (Array.isArray(address)) 
+      return res.status(400).send({ status: false, message: "Address should be in Object format " });
+    
     if (typeof address != "object" )
       return res.status(400).send({ status: false, message: "Address should be in Object format " });
 
@@ -436,6 +438,7 @@ const UpdateUser = async function (req, res) {
     // ========================== address
     if (address) {
       address = userData.address = JSON.parse(address);
+      console.log(address);
 
       if (typeof address != "object") return res.status(400).send({ status: false, message: "Address should be in Object format ", });
       if (address == "") return res.status(400).send({ status: false, message: "Please provide value of address" })
