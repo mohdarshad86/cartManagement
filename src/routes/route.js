@@ -29,6 +29,7 @@ router.delete("/users/:userId/cart", auth.authentication, auth.authorization, ca
 
 //Order
 router.post("/users/:userId/orders", orderController.createOrder);
+router.put("/users/:userId/orders", orderController.updateOrder);
 
 router.all('*/', function(req, res){
     return res.status(400).send({status:false, message:"Invalid Path"})
