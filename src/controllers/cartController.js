@@ -108,14 +108,14 @@ const updateCart = async function (req, res) {
         let { productId, cartId, removeProduct } = req.body
         let userId = req.params.userId
 
-        if (!removeProduct) 
+        if (!removeProduct)
             return res.status(400).send({ status: false, message: " Please send removeProduct attribute" })
-        
+
         removeProduct = Number(removeProduct)
 
-        if (isNaN(removeProduct) || removeProduct !== 1 && removeProduct !== 0) 
-            return res.status(404).send({ status: false, message: "removeProduct can only contain +1(Remove 1 quantity) or 0(Remove all quantity)" })        
-        
+        if (isNaN(removeProduct) || removeProduct !== 1 && removeProduct !== 0)
+            return res.status(404).send({ status: false, message: "removeProduct can only contain +1(Remove 1 quantity) or 0(Remove all quantity)" })
+
         if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: " Invalid CartID!" })
 
         if (Object.keys(req.body).length == 0)
@@ -145,8 +145,8 @@ const updateCart = async function (req, res) {
                 totalPrice = isCartExist.totalPrice - product.price
             }
             if (isCartExist.items[isMatchProductId].quantity == 0) {
-                isCartExist.items.splice(isMatchProductId, 1 )    
-                totalItems = isCartExist.totalItems - 1           
+                isCartExist.items.splice(isMatchProductId, 1)
+                totalItems = isCartExist.totalItems - 1
             }
         }
 
@@ -158,8 +158,8 @@ const updateCart = async function (req, res) {
 
         console.log(totalItems, totalPrice);
 
-        let save = await cartModel.findOneAndUpdate({ _id: cartId }, { items: isCartExist.items, totalPrice:totalPrice, totalItems:totalItems }, { new: true })
-        return res.status(200).send({ status: true,  message: 'Success', data: save })
+        let save = await cartModel.findOneAndUpdate({ _id: cartId }, { items: isCartExist.items, totalPrice: totalPrice, totalItems: totalItems }, { new: true })
+        return res.status(200).send({ status: true, message: 'Success', data: save })
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
@@ -167,4 +167,67 @@ const updateCart = async function (req, res) {
 }
 
 
-module.exports = { createCart, updateCart }
+const getCart = async (req, res) => {
+    try {
+        const userId = req.params.userId
+
+        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "provide valid user id " })
+        let userData = await userModel.findById(userId)
+        if (!userData) return res.status(404).send({ status: false, message: "No user found" })
+
+        let cartSummary = await cartModel.findOne({ userId: userId })
+        if (!cartSummary) return res.status(404).send({ status: false, message: "Your cart is empty" })
+        res.status(200).send({ status: true, data: cartSummary })
+    }
+    catch (err) { res.status(500).send({ status: false, message: err.message }) }
+}
+
+
+// ### DELETE /users/:userId/cart
+// - Deletes the cart for the user.
+// - Make sure that cart exist.
+// - Make sure the userId in params and in JWT token match.
+// - Make sure the user exist
+// - cart deleting means array of items is empty, totalItems is 0, totalPrice is 0.
+
+const deleteCart = async (req, res) => {
+    try {
+        const userId = req.params.userId
+
+        if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "provide valid user id " })
+        let userData = await userModel.findById(userId)
+        if (!userData) return res.status(404).send({ status: false, message: "No user found" })
+
+        let cartData = await cartModel.findOne({ userId: userId })
+        if (!cartData) return res.status(404).send({ status: false, message: "No cart Found" })
+
+        if (cartData.items.length == 0) return res.status(404).send({ status: false, message: "Cart is empty now" })
+
+
+        let items = cartData.items
+        while (items.length != 0) {
+            for (let i = 0; i < items.length; i++) {
+                console.log(items[i])
+                items.shift(items[i])
+
+            }
+            console.log(items)
+        }
+
+        totalPrice = cartData.totalPrice == 0
+        totalItems = cartData.totalItems == 0
+
+
+        const deleteCart = await cartModel.findOneAndUpdate({ userId: userId },
+            { $set: { items: cartData.items, totalPrice: totalPrice, totalItems: totalItems } }, { new: true })
+
+        return res.status(200).send({ status: false, message: "cart has been deleted", data: deleteCart })
+    }
+    catch (err) { res.status(500).send({ status: false, message: err.message }) }
+
+
+
+}
+
+
+module.exports = { createCart, updateCart, getCart, deleteCart }
