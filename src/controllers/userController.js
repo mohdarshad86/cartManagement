@@ -306,9 +306,7 @@ const loginUser = async (req, res) => {
     });
 
     if (!isUserExist)
-      return res.status(404).send({
-        status: false, message: "No user found with given credentials ",
-      });
+      return res.status(404).send({ status: false, message: "No user found with given Email",});
 
     let passwordCompare = await bcrypt.compare(password, isUserExist.password);
     if (!passwordCompare) return res.status(400).send({ status: false, message: "Please enter valid password" })
@@ -319,6 +317,8 @@ const loginUser = async (req, res) => {
     );
 
     let tokenInfo = { userId: isUserExist._id, token: token };
+
+    res.setHeader('x-api-key', token)
 
     return res.status(200).send({ status: true, message: "User login successfully", data: tokenInfo });
 

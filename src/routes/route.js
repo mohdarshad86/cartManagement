@@ -21,11 +21,10 @@ router.put('/products/:productId',aws.awsUpdate, productController.updateProduct
 router.delete('/products/:productId',  productController.deleteProduct)
 
 //Cart
-router.post("/users/:userId/cart", cartController.createCart);
-router.put("/users/:userId/cart", cartController.updateCart);
-router.get("/users/:userId/cart", cartController.getCart);
-router.delete("/users/:userId/cart", cartController.deleteCart);
-
+router.post("/users/:userId/cart", auth.authentication, auth.authorization, cartController.createCart);
+router.put("/users/:userId/cart", auth.authentication, auth.authorization, cartController.updateCart);
+router.get("/users/:userId/cart", auth.authentication, auth.authorization, cartController.getCart);
+router.delete("/users/:userId/cart", auth.authentication, auth.authorization, cartController.deleteCart);
 
 router.all('*/', function(req, res){
     return res.status(400).send({status:false, message:"Invalid Path"})
