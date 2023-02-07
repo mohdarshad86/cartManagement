@@ -15,12 +15,15 @@ const createCart = async function (req, res) {
         }
 
         if (cartId) {
+            cartId = data.cartId= cartId.trim();
             if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: " Valid CartID!" })
             var cartExist = await cartModel.findOne({ _id: cartId, userId: userId })
             if (!cartExist) return res.status(404).send({ status: false, message: "No cart found" })
         }
 
         if (!productId) return res.status(400).send({ status: false, message: "Product id is mandatory " })
+
+        productId = data.productId = productId.trim();
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: " Invalid product ID!" })
         let product = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!product) return res.status(400).send({ status: false, message: "Product doesn't exists!" })
@@ -105,11 +108,15 @@ const updateCart = async function (req, res) {
             return res.status(400).send({ status: false, message: "can't create data with empty body" })
 
         if (!productId) return res.status(400).send({ status: false, message: "Product id is mandatory " })
+
+        productId = data.productId = productId.trim();
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: " Invalid product ID!" })
         let product = await productModel.findById(productId)
 
 
         if (!cartId) return res.status(400).send({ status: false, message: "Cart id is mandatory " })
+
+        cartId = data.cartId = cartId.trim();
         if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: " Valid CartID!" })
 
         let isCartExist = await cartModel.findOne({ _id: cartId, userId: userId })
@@ -148,7 +155,6 @@ const updateCart = async function (req, res) {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
-
 
 const getCart = async (req, res) => {
     try {
@@ -191,7 +197,6 @@ const deleteCart = async (req, res) => {
 
         totalPrice = cartData.totalPrice == 0
         totalItems = cartData.totalItems == 0
-
 
         const deleteCart = await cartModel.findOneAndUpdate({ userId: userId },
             { $set: { items: cartData.items, totalPrice: totalPrice, totalItems: totalItems } }, { new: true })

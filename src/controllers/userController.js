@@ -507,14 +507,12 @@ const UpdateUser = async function (req, res) {
 
             if (typeof address.billing.pincode != "number") {
               return res.status(400).send({
-                status: false, message: "Billing pincode  will be in number ",
-              });
+                status: false, message: "Billing pincode  will be in number ",});
             }
 
             if (address.billing.pincode == "")
               return res.status(400).send({
-                status: false, message: "Please provide billing pincode value",
-              })
+                status: false, message: "Please provide billing pincode value",})
           }
         }
       }
