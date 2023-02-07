@@ -9,8 +9,7 @@ const register = async (req, res) => {
   try {
     let userData = req.body;
 
-    let { fname, lname, email, profileImage, phone, password, address } =
-      userData;
+    let { fname, lname, email, profileImage, phone, password, address } = userData;
 
     if (Object.keys(userData).length == 0)
       return res.status(400).send({ status: false, message: "please provide required fields" });
@@ -211,9 +210,8 @@ const register = async (req, res) => {
     }
 
     //=== city
-    if (!address.billing.city) {
+    if (!address.billing.city) 
       return res.status(400).send({ status: false, message: "billing city  is mandatory " });
-    }
 
     if (typeof address.shipping.city != "string") {
       return res.status(400).send({
@@ -359,8 +357,8 @@ const UpdateUser = async function (req, res) {
 
 
       console.log(title)
-      let abc = Object.keys(data)
-      for (i of abc) {
+      let checkEmpty = Object.keys(data)
+      for (i of checkEmpty) {
         if (data[i].trim() == "")
           return res.send({ status: false, message: `${i} can not be Empty` })
       }

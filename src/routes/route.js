@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const productController=require("../controllers/productController")
 const cartController=require("../controllers/cartController")
+const orderController=require('../controllers/orderController')
 const auth = require('../middlewares/auth')
 const aws = require("../middlewares/awsLink");
 
@@ -25,6 +26,9 @@ router.post("/users/:userId/cart", auth.authentication, auth.authorization, cart
 router.put("/users/:userId/cart", auth.authentication, auth.authorization, cartController.updateCart);
 router.get("/users/:userId/cart", auth.authentication, auth.authorization, cartController.getCart);
 router.delete("/users/:userId/cart", auth.authentication, auth.authorization, cartController.deleteCart);
+
+//Order
+router.post("/users/:userId/orders", orderController.createOrder);
 
 router.all('*/', function(req, res){
     return res.status(400).send({status:false, message:"Invalid Path"})
