@@ -3,24 +3,7 @@ const cartModel = require("../models/cartModel");
 const userModel = require("../models/userModel");
 const productModel = require("../models/productModel");
 
-/*
-
-## Cart APIs (authentication required as authorization header - bearer token)
-### POST /users/:userId/cart (Add to cart)
-- Create a cart for the user if it does not exist.
- Else add product(s) in cart.
-- Get cart id in request body.
-- Get productId in request body.
-- Make sure that cart exist.
-- Add a product(s) for a user in the cart.
-- Make sure the userId in params and in JWT token match.
-- Make sure the user exist
-- Make sure the product(s) are valid and not deleted.
-- Get product(s) details in response body.
-*/
-
 const createCart = async function (req, res) {
-
     try {
         const userId = req.params.userId
         const cartData = req.body;
@@ -182,14 +165,6 @@ const getCart = async (req, res) => {
     catch (err) { res.status(500).send({ status: false, message: err.message }) }
 }
 
-
-// ### DELETE /users/:userId/cart
-// - Deletes the cart for the user.
-// - Make sure that cart exist.
-// - Make sure the userId in params and in JWT token match.
-// - Make sure the user exist
-// - cart deleting means array of items is empty, totalItems is 0, totalPrice is 0.
-
 const deleteCart = async (req, res) => {
     try {
         const userId = req.params.userId
@@ -223,10 +198,9 @@ const deleteCart = async (req, res) => {
 
         return res.status(200).send({ status: false, message: "cart has been deleted", data: deleteCart })
     }
-    catch (err) { res.status(500).send({ status: false, message: err.message }) }
-
-
-
+    catch (err) {
+        res.status(500).send({ status: false, message: err.message })
+    }
 }
 
 
