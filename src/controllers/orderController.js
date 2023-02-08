@@ -11,22 +11,12 @@ const createOrder = async (req, res) => {
         let data = req.body
         let { cartId } = data;
 
-        /* if (cancellable) {
-
-            cancellable = data.cancellable = cancellable.trim()
-
-            if (cancellable = '') return res.status(400).send({ status: false, message: "Please provide valid cancellable value" });
-            if (cancellable == false) cancellable = false
-
-            cancellable = (cancellable == true) ? true : false
-        }
-
-        if (status) {
-            status = data.status = status.trim()
-            if (!["pending", "completed", "cancelled"].includes(status))
-                return res.status(400).send({ status: false, message: "Please provide mandatory data to create order " });
-         }
-         */
+        if(cancellable){
+            if(typeof cancellable == "string") {
+            if(cancellable == "true" || cancellable == "false")  cancellable = JSON.parse(cancellable)
+           else return res.status(400).send({ status: false, message: "chal chal apne bap ko mat sikha" });
+       }
+    }
 
         if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "Please provide mandatory data to create order " });
 
@@ -131,7 +121,6 @@ const updateOrder = async (req, res) => {
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
     }
-
 }
 
 module.exports = { createOrder, updateOrder };

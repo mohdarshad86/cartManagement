@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt')
 const validation = require("../validations/validation");
 
 const register = async (req, res) => {
-  // there are 3 problems have to resolve ==> 1. address , fname validation , bycrpt
+
   try {
     let userData = req.body;
 
@@ -79,17 +79,14 @@ const register = async (req, res) => {
 
 
     //regex password
-
     if (!validation.validatePassword(password))
       return res.status(400).send({ status: false, message: "please provide valid Alphanumeric 8-15 length Atleast One Special character password" });
 
     //Encrypting password
-
     let hashing = bcrypt.hashSync(password, 10);
     userData.password = hashing;
 
     //======= phone =============
-
     if (!phone)
       return res.status(400).send({ status: false, message: "phone is mandatory" });
 
@@ -116,7 +113,6 @@ const register = async (req, res) => {
 
 
     //======================== address =============
-    // console.log(typeof address);
     if (!address)
       return res.status(400).send({ status: false, message: "Address is mandatory " });
 
@@ -125,8 +121,7 @@ const register = async (req, res) => {
       if (address == "")
         return res.status(400).send({ status: false, message: "Please enter address value" });
 
-
-      address = userData.address = JSON.parse(address);
+      if(typeof address == 'string') address = userData.address = JSON.parse(address);
 
       if (Array.isArray(address))
         return res.status(400).send({ status: false, message: "Address should be in Object format " });
@@ -263,9 +258,7 @@ const register = async (req, res) => {
         })
       }
       if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
-    } catch (error) {
-      console.log(error);
-      
+    } catch (error) {     
       return res.status(400).send({ status: false, message: error.message })
     }
 

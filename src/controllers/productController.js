@@ -116,9 +116,8 @@ const createProduct = async (req, res) => {
 
         //=======================availableSizes: {array of string, at least one size, enum["S", "XS","M","X", "L","XXL", "XL"]}
 
-
-        if (availableSizes || Object.values(availableSizes)==0) {
-            let count=0;
+        if (availableSizes || Object.values(availableSizes).length==0) {
+            let count = 0;
             if (typeof availableSizes != "string") return res.status(400).send({ status: false, message: `Please Enter sizes in string` })
 
             availableSizes= productData.availableSizes=productData.availableSizes.trim()
@@ -293,9 +292,7 @@ const updateProduct = async (req, res) => {
 
         let productImage = req.files
 
-
         if (Object.keys(data).length !== 0) {
-
 
             console.log(title)
             let abc = Object.keys(data)

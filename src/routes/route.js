@@ -9,7 +9,7 @@ const aws = require("../middlewares/awsLink");
 
 
 //USER
-router.post("/register",  userController.register);
+router.post("/register",aws.awsLink,  userController.register);
 router.post("/login", userController.loginUser)
 router.get('/user/:userId/profile', auth.authentication, userController.getUser)
 router.put('/user/:userId/profile',aws.awsUpdate, auth.authentication, auth.authorization, userController.UpdateUser)
