@@ -10,9 +10,8 @@ const createCart = async function (req, res) {
 
         let { cartId, productId } = cartData;
 
-        if (Object.keys(cartData).length == 0) {
+        if (Object.keys(cartData).length == 0) 
             return res.status(400).send({ status: false, message: "can't create data with empty body" })
-        }
 
         if (cartId) {
             cartId = data.cartId= cartId.trim();
@@ -25,6 +24,7 @@ const createCart = async function (req, res) {
 
         productId = data.productId = productId.trim();
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: " Invalid product ID!" })
+
         let product = await productModel.findOne({ _id: productId, isDeleted: false })
         if (!product) return res.status(400).send({ status: false, message: "Product doesn't exists!" })
 
@@ -51,9 +51,9 @@ const createCart = async function (req, res) {
 
                     totalItem = productPresent.length
 
-                    let cart = await cartModel.findOneAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
+                    let updateCart = await cartModel.findOneAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
 
-                    return res.status(200).send({ status: true, data: cart })
+                    return res.status(200).send({ status: true, data: updateCart })
                 }
             }
 
@@ -66,8 +66,8 @@ const createCart = async function (req, res) {
             cartExist.items.push(newItem)
             totalItem = cartExist.items.length
 
-            let cart = await cartModel.findByIdAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
-            return res.status(200).send({ status: true, data: cart })
+            let newCart = await cartModel.findByIdAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
+            return res.status(200).send({ status: true, data: newCart })
         }
 
         let items = {
@@ -76,10 +76,10 @@ const createCart = async function (req, res) {
         }
 
         let cartAlreadyExist = await cartModel.findOne({ userId: userId })
-        console.log(cartAlreadyExist)
-        if (cartAlreadyExist) {
+
+        if (cartAlreadyExist) 
             return res.status(400).send({ status: false, message: "Cart already exist for this user, Please send cart id in request" })
-        }
+        
         let cart = await cartModel.create({ userId: userId, items: items, totalPrice: totalPrice, totalItems: 1 })
 
         return res.status(201).send({ status: true, data: cart })
@@ -88,7 +88,7 @@ const createCart = async function (req, res) {
     }
 }
 
-const updateCart = async function (req, res) {
+const updateCart = async (req, res) =>{
 
     try {
         let { productId, cartId, removeProduct } = req.body
@@ -111,8 +111,12 @@ const updateCart = async function (req, res) {
 
         productId = data.productId = productId.trim();
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: " Invalid product ID!" })
+
         let product = await productModel.findById(productId)
 
+        if(!product) return res.status(400).send({ status: false, message: "Product is not available to Order " })
+        
+        if(product.isDeleted == true) return res.status(400).send({ status: false, message: "Product is Out of stock " })
 
         if (!cartId) return res.status(400).send({ status: false, message: "Cart id is mandatory " })
 

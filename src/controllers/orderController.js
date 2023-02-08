@@ -9,9 +9,8 @@ const createOrder = async (req, res) => {
         if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "provide valid user id " });
 
         let data = req.body
-        let { cartId, cancellable, status } = data;
+        let { cartId, status } = data;
 
-        console.log(typeof cancellable, typeof cartId);
         // let checkEmpty = Object.keys(data)        
         // for (i of checkEmpty) {
         //     data[i] = data[i].trim()
@@ -19,15 +18,15 @@ const createOrder = async (req, res) => {
         //     return res.send({ status: false, message: `${i} can not be Empty` })
         // }
 
-        if (cancellable) {
+        // if (cancellable) {
 
-            cancellable = data.cancellable = cancellable.trim()
+        //     cancellable = data.cancellable = cancellable.trim()
 
-            if (cancellable = '') return res.status(400).send({ status: false, message: "Please provide valid cancellable value" });
-            // if (cancellable == false) cancellable = false
+        //     if (cancellable = '') return res.status(400).send({ status: false, message: "Please provide valid cancellable value" });
+        //     if (cancellable == false) cancellable = false
 
-            cancellable = (cancellable == true) ? true : false
-        }
+        //     cancellable = (cancellable == true) ? true : false
+        // }
 
         if (status) {
             status = data.status = status.trim()
@@ -56,14 +55,35 @@ const createOrder = async (req, res) => {
         for (let i = 0; i < cartData.items.length; i++) {
             quantity += cartData.items[i].quantity
         }
+        
+        if (status == 'completed' || status == 'cancelled') {
+            
+            cartData.cancellable = false
+        }
+
         let obj = {
             ...cartData,
             totalQuantity: quantity,
-            cancellable: cancellable,
+            cancellable: cartData.cancellable,
             status: status
         };
 
         let orderData = await orderModel.create(obj);
+
+        /* 
+        let items = cartData.items
+        while (items.length != 0) {
+            for (let i = 0; i < items.length; i++) {
+                console.log(items[i])
+                items.shift(items[i])
+
+            }
+            console.log(items)
+        }
+
+        totalPrice = cartData.totalPrice == 0
+        totalItems = cartData.totalItems == 0
+        */
         res.status(200).send({ status: false, data: orderData });
 
     }
