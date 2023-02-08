@@ -1,7 +1,7 @@
 //Name
 
 const validateName = (name) => {
-  return /^[A-Z](?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i.test(name);
+  return /^[A-Z]{1}([a-zA-Z ]){2,30}$/.test(name);
 };
 
 // Email
@@ -20,7 +20,7 @@ const validatePassword = (password) => {
 //Phone
 
 const validateMobileNo = (Number) => {
-  return /^((\+91)?|91)?[6789][0-9]{9}$/g.test(Number);
+  return /^[6789][0-9]{9}$/g.test(Number);
 };
 
 //Place

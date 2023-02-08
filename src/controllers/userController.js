@@ -120,151 +120,156 @@ const register = async (req, res) => {
     if (!address)
       return res.status(400).send({ status: false, message: "Address is mandatory " });
 
-    address = userData.address = address.trim();
-    if (address == "")
-      return res.status(400).send({ status: false, message: "Please enter address value" });
+    try {
+      address = userData.address = address.trim();
+      if (address == "")
+        return res.status(400).send({ status: false, message: "Please enter address value" });
 
 
-    address = userData.address = JSON.parse(address);
+      address = userData.address = JSON.parse(address);
 
-    if (Array.isArray(address))
-      return res.status(400).send({ status: false, message: "Address should be in Object format " });
+      if (Array.isArray(address))
+        return res.status(400).send({ status: false, message: "Address should be in Object format " });
 
-    if (typeof address != "object")
-      return res.status(400).send({ status: false, message: "Address should be in Object format " });
+      if (typeof address != "object")
+        return res.status(400).send({ status: false, message: "Address should be in Object format " });
 
-    // ======== address  shipping ============
+      // ======== address  shipping ============
 
-    if (!address.shipping)
-      return res.status(400).send({ status: false, message: "Shipping Address is mandatory " });
+      if (!address.shipping)
+        return res.status(400).send({ status: false, message: "Shipping Address is mandatory " });
 
-    // address.shipping = userData.address.shipping = JSON.parse(address.shipping);
+       
+      // address.shipping = userData.address.shipping = JSON.parse(address.shipping);
 
-    // address.shipping = userData.address.shipping = address.shipping.trim();
-    if (typeof address.shipping != "object")
-      return res.status(400).send({ status: false, message: "shipping  will be in object " });
+      // address.shipping = userData.address.shipping = address.shipping.trim();
+      if (typeof address.shipping != "object")
+        return res.status(400).send({ status: false, message: "shipping  will be in object " });
 
-    if (address.shipping == "")
-      return res.status(400).send({ status: false, message: "Please enter shipping value" });
-
-
-    if (typeof address.shipping != "object")
-      return res.status(400).send({ status: false, message: "Address of shipping should be in Object format ", });
-
-    // =========street validation=========
-    if (!address.shipping.street)
-      return res.status(400).send({ status: false, message: "Shipping street is mandatory " });
-
-    if (typeof address.shipping.street != "string")
-      return res.status(400).send({ status: false, message: "shipping street  will be in string " });
-
-    address.shipping.street = userData.address.shipping.street = address.shipping.street.trim()
-
-    if (address.shipping.street == "")
-      return res.status(400).send({ status: false, message: "Please provide shipping street value" });
-
-    //========= city validation =========================
-
-    if (!address.shipping.city)
-      return res.status(400).send({ status: false, message: "shipping city is mandatory " });
-
-    if (typeof address.shipping.city != "string")
-      return res.status(400).send({ status: false, message: "shipping city will be in string " });
-
-    address.shipping.city = userData.address.shipping.city = address.shipping.city.trim();
-
-    if (address.shipping.city == "")
-      return res.status(400).send({ status: false, message: "Please provide shipping city value" })
-
-    //====pincode
-
-    if (!address.shipping.pincode)
-      return res.status(400).send({
-        status: false, message: "shipping pincode is mandatory ",
-      });
-
-    // address.shipping.pincode = userData.address.shipping.pincode =  address.shipping.pincode.trim(); 
-    if (!validation.validatePincode(address.shipping.pincode))
-      return res.status(400).send({ status: false, message: "please provide valid shipping pincode" })
-
-    if (typeof address.shipping.pincode != "number")
-      return res.status(400).send({
-        status: false, message: "shipping pincode  will be in number ",
-      });
-
-    if (address.shipping.pincode == "")
-      return res.status(400).send({
-        status: false, message: "Please provide shipping pincode value",
-      })
-
-    //====== address billing ====
-    if (!address.billing)
-      return res.status(400).send({ status: false, message: "billing Address is mandatory " });
-
-    if (typeof address.billing != "object")
-      return res.status(400).send({
-        status: false, message: "Address of billing should be in Object format ",
-      });
+      if (address.shipping == "")
+        return res.status(400).send({ status: false, message: "Please enter shipping value" });
 
 
-    if (!address.billing.street) {
-      return res.status(400).send({ status: false, message: "billing street is mandatory " });
+      if (typeof address.shipping != "object")
+        return res.status(400).send({ status: false, message: "Address of shipping should be in Object format ", });
+
+      // =========street validation=========
+      if (!address.shipping.street)
+        return res.status(400).send({ status: false, message: "Shipping street is mandatory " });
+
+      if (typeof address.shipping.street != "string")
+        return res.status(400).send({ status: false, message: "shipping street  should be in string " });
+
+      address.shipping.street = userData.address.shipping.street = address.shipping.street.trim()
+
+      if (address.shipping.street == "")
+        return res.status(400).send({ status: false, message: "Please provide shipping street value" });
+
+      //========= city validation =========================
+
+      if (!address.shipping.city)
+        return res.status(400).send({ status: false, message: "shipping city is mandatory " });
+
+      if (typeof address.shipping.city != "string")
+        return res.status(400).send({ status: false, message: "shipping city should be in string " });
+
+      address.shipping.city = userData.address.shipping.city = address.shipping.city.trim();
+
+      if (address.shipping.city == "")
+        return res.status(400).send({ status: false, message: "Please provide shipping city value" })
+
+      //====pincode
+
+      if (!address.shipping.pincode)
+        return res.status(400).send({
+          status: false, message: "shipping pincode is mandatory ",
+        });
+
+      // address.shipping.pincode = userData.address.shipping.pincode =  address.shipping.pincode.trim(); 
+      if (!validation.validatePincode(address.shipping.pincode))
+        return res.status(400).send({ status: false, message: "please provide valid shipping pincode" })
+
+      if (typeof address.shipping.pincode != "number")
+        return res.status(400).send({
+          status: false, message: "shipping pincode  should be in number ",
+        });
+
+      if (address.shipping.pincode == "")
+        return res.status(400).send({
+          status: false, message: "Please provide shipping pincode value",
+        })
+
+      //====== address billing ====
+      if (!address.billing)
+        return res.status(400).send({ status: false, message: "billing Address is mandatory " });
+
+      if (typeof address.billing != "object")
+        return res.status(400).send({
+          status: false, message: "Address of billing should be in Object format ",
+        });
+
+
+      if (!address.billing.street) {
+        return res.status(400).send({ status: false, message: "billing street is mandatory " });
+      }
+
+      if (typeof address.billing.street != "string") {
+        return res.status(400).send({
+          status: false, message: "billing street  should be in string ",
+        });
+      }
+      address.billing.street = address.billing.street.trim();
+
+      if (address.billing.street == "") {
+        return res.status(400).send({
+          status: false, message: "Please provide billing street value",
+        })
+      }
+
+      //=== city
+      if (!address.billing.city)
+        return res.status(400).send({ status: false, message: "billing city  is mandatory " });
+
+      if (typeof address.shipping.city != "string") {
+        return res.status(400).send({
+          status: false, message: "billing city  should be in string ",
+        });
+      }
+
+      address.billing.city = address.billing.city.trim();
+
+      if (address.billing.city == "") {
+        return res.status(400).send({
+          status: false, message: "Please provide billing city value",
+        })
+      }
+
+      //====pincode============
+
+      if (!address.billing.pincode) {
+        return res.status(400).send({ status: false, message: "billing pincode  is mandatory " });
+      }
+
+
+      if (typeof address.shipping.pincode != "number") {
+        return res.status(400).send({
+          status: false, message: "billing pincode  should be in number ",
+        });
+      }
+
+      if (address.billing.pincode == "") {
+        return res.status(400).send({
+          status: false, message: "Please provide billing pincode value",
+        })
+      }
+      if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
+    } catch (error) {
+      console.log(error);
+      
+      return res.status(400).send({ status: false, message: error.message })
     }
-
-    if (typeof address.billing.street != "string") {
-      return res.status(400).send({
-        status: false, message: "billing street  will be in string ",
-      });
-    }
-    address.billing.street = address.billing.street.trim();
-
-    if (address.billing.street == "") {
-      return res.status(400).send({
-        status: false, message: "Please provide billing street value",
-      })
-    }
-
-    //=== city
-    if (!address.billing.city)
-      return res.status(400).send({ status: false, message: "billing city  is mandatory " });
-
-    if (typeof address.shipping.city != "string") {
-      return res.status(400).send({
-        status: false, message: "billing city  will be in string ",
-      });
-    }
-
-    address.billing.city = address.billing.city.trim();
-
-    if (address.billing.city == "") {
-      return res.status(400).send({
-        status: false, message: "Please provide billing city value",
-      })
-    }
-
-    //====pincode============
-
-    if (!address.billing.pincode) {
-      return res.status(400).send({ status: false, message: "billing pincode  is mandatory " });
-    }
-
-
-    if (typeof address.shipping.pincode != "number") {
-      return res.status(400).send({
-        status: false, message: "billing pincode  will be in number ",
-      });
-    }
-
-    if (address.billing.pincode == "") {
-      return res.status(400).send({
-        status: false, message: "Please provide billing pincode value",
-      })
-    }
-
-    if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
 
     //AWS
-
     userData.profileImage = req.image;
 
     const usercreated = await userModel.create(userData);
@@ -373,7 +378,7 @@ const UpdateUser = async function (req, res) {
       let checkEmpty = Object.keys(userData)
       for (i of checkEmpty) {
         if (userData[i].trim() == "")
-          return res.send({ status: false, message: `${i} can not be Empty` })
+          return res.status(400).send({ status: false, message: `${i} can not be Empty` })
       }
     }
 
@@ -390,7 +395,7 @@ const UpdateUser = async function (req, res) {
     if (fname) {
       if (typeof fname != "string")
         return res.status(400).send({ status: false, message: "first name should be in string" });
-      // regex
+     
       fname = userData.fname = fname.trim();
 
       if (fname == "") return res.status(400).send({ status: false, message: "Please Enter first name value" });
@@ -403,7 +408,7 @@ const UpdateUser = async function (req, res) {
       if (typeof lname != "string") {
         return res.status(400).send({ status: false, message: "last name should be in string" });
       }
-      // regex
+      
       lname = userData.lname = lname.trim();
 
       if (lname == "") return res.status(400).send({ status: false, message: "Please enter last name value" });
@@ -421,9 +426,11 @@ const UpdateUser = async function (req, res) {
 
       email = userData.email = email.trim()
 
+      if (!validation.validateEmail(email))
+      return res.status(400).send({ status: false, message: "Please enter valid Email" });
+
       let userExist = await userModel.findOne({ $or: [{ email: email }, { phone: phone }] })
 
-      console.log(userExist);
       if (userExist) {
         if (userExist.email == email) // check   
           return res.status(400).send({ status: false, message: "email is  already exists" })
@@ -458,8 +465,9 @@ const UpdateUser = async function (req, res) {
     }
     // ========================== address
     if (address) {
-      address = userData.address = JSON.parse(address);
-      console.log(address);
+      try {
+        address = userData.address = JSON.parse(address);
+      
 
       
     if (Array.isArray(address))
@@ -476,7 +484,7 @@ const UpdateUser = async function (req, res) {
       if (address.shipping) {
         if (typeof address.shipping != "object") return res.status(400).send({ status: false, message: "Address of shipping should be in Object format ", });
 
-        if (address.shipping.street) { if (typeof address.shipping.street != "string") { return res.status(400).send({ status: false, message: "shipping street  will be in string ", }); } }
+        if (address.shipping.street) { if (typeof address.shipping.street != "string") { return res.status(400).send({ status: false, message: "shipping street  should be in string ", }); } }
 
         address.shipping.street = userData.address.shipping.street = address.shipping.street.trim()
 
@@ -537,6 +545,11 @@ const UpdateUser = async function (req, res) {
           }
         }
       }
+      } catch (error) {
+        return res.status(400).send({status: false, message: "Syntax Error "+ error.message})
+      }
+      
+      
     }
 
     // profile image
