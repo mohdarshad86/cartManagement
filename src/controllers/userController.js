@@ -353,23 +353,23 @@ const UpdateUser = async function (req, res) {
     let productImage = req.files
 
 
-    if (Object.keys(data).length !== 0) {
+    if (Object.keys(userData).length !== 0) {
 
 
       console.log(title)
-      let checkEmpty = Object.keys(data)
+      let checkEmpty = Object.keys(userData)
       for (i of checkEmpty) {
-        if (data[i].trim() == "")
+        if (userData[i].trim() == "")
           return res.send({ status: false, message: `${i} can not be Empty` })
       }
     }
 
     if (productImage) {
-      data.length += 1
+      userData.length += 1
     }
 
 
-    if (Object.keys(data).length == 0) {
+    if (Object.keys(userData).length == 0) {
       return res.status(400).send({ status: false, message: "Please provide some value" })
     }
 

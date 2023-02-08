@@ -14,15 +14,15 @@ const createCart = async function (req, res) {
             return res.status(400).send({ status: false, message: "can't create data with empty body" })
 
         if (cartId) {
-            cartId = data.cartId= cartId.trim();
+            cartId = cartData.cartId= cartId.trim();
             if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: " Valid CartID!" })
             var cartExist = await cartModel.findOne({ _id: cartId, userId: userId })
             if (!cartExist) return res.status(404).send({ status: false, message: "No cart found" })
         }
-
+      
         if (!productId) return res.status(400).send({ status: false, message: "Product id is mandatory " })
 
-        productId = data.productId = productId.trim();
+        productId = cartData.productId = productId.trim();
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: " Invalid product ID!" })
 
         let product = await productModel.findOne({ _id: productId, isDeleted: false })

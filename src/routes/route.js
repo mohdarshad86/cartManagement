@@ -28,8 +28,8 @@ router.get("/users/:userId/cart", auth.authentication, auth.authorization, cartC
 router.delete("/users/:userId/cart", auth.authentication, auth.authorization, cartController.deleteCart);
 
 //Order
-router.post("/users/:userId/orders", orderController.createOrder);
-router.put("/users/:userId/orders", orderController.updateOrder);
+router.post("/users/:userId/orders",auth.authentication, auth.authorization, orderController.createOrder);
+router.put("/users/:userId/orders",auth.authentication, auth.authorization, orderController.updateOrder);
 
 router.all('*/', function(req, res){
     return res.status(400).send({status:false, message:"Invalid Path"})
