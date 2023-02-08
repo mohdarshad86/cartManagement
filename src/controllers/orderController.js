@@ -59,24 +59,11 @@ const createOrder = async (req, res) => {
 
         let orderData = await orderModel.create(obj);
        
-        let items = cartData.items
-        while (items.length != 0) {
-            for (let i = 0; i < items.length; i++) {
-                items.shift(items[i])
+       await cartModel.findOneAndUpdate( {userId: userId },
+             {$set: { items: [], totalPrice:0, totalItems: 0 }} , { new: true })
 
-            }
-            console.log(items)
-        }
-
-        totalPrice = cartData.totalPrice = 0
-        totalItems = cartData.totalItems = 0
-        // if(items == null) items = []
-        console.log(items, totalPrice, totalItems)
-        let abc = await cartModel.findByIdAndUpdate( userId ,
-             {$set: { items: items, totalPrice: totalPrice, totalItems: totalItems }} , { new: true })
-
-            console.log(abc)
-         return res.status(201).send({ status: false, data: orderData , cart: abc});
+          
+         return res.status(201).send({ status: false, data: orderData });
 
     }
     catch (err) { return res.status(500).send({ status: false, message: err.message }) }
