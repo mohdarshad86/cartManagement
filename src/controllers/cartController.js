@@ -53,7 +53,7 @@ const createCart = async function (req, res) {
 
                     let updateCart = await cartModel.findOneAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
 
-                    return res.status(200).send({ status: true, message: 'Success', data: updateCart })
+                    return res.status(200).send({ status: true, data: updateCart })
                 }
             }
 
@@ -67,7 +67,7 @@ const createCart = async function (req, res) {
             totalItem = cartExist.items.length
 
             let newCart = await cartModel.findByIdAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
-            return res.status(200).send({ status: true,message: 'Success', data: newCart })
+            return res.status(200).send({ status: true, message: "Success", data: newCart })
         }
 
         let items = {
@@ -82,7 +82,7 @@ const createCart = async function (req, res) {
         
         let cart = await cartModel.create({ userId: userId, items: items, totalPrice: totalPrice, totalItems: 1 })
 
-        return res.status(201).send({ status: true,message: 'Success', data: cart })
+        return res.status(201).send({ status: true, message: "Success", data: cart })
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
@@ -91,7 +91,8 @@ const createCart = async function (req, res) {
 const updateCart = async (req, res) =>{
 
     try {
-        let { productId, cartId, removeProduct } = req.body
+        let data = req.body
+        let { productId, cartId, removeProduct } = data
         let userId = req.params.userId
 
         if (!removeProduct)
@@ -150,8 +151,6 @@ const updateCart = async (req, res) =>{
             totalPrice = isCartExist.totalPrice - (product.price * isCartExist.items[isMatchProductId].quantity)
         }
 
-        console.log(totalItems, totalPrice);
-
         let save = await cartModel.findOneAndUpdate({ _id: cartId }, { items: isCartExist.items, totalPrice: totalPrice, totalItems: totalItems }, { new: true })
         return res.status(200).send({ status: true, message: 'Success', data: save })
 
@@ -170,9 +169,9 @@ const getCart = async (req, res) => {
 
         let cartSummary = await cartModel.findOne({ userId: userId })
         if (!cartSummary) return res.status(404).send({ status: false, message: "Your cart is empty" })
-        res.status(200).send({ status: true,message: 'Success', data: cartSummary })
+        return res.status(200).send({ status: true, message: "Success", data: cartSummary })
     }
-    catch (err) { res.status(500).send({ status: false, message: err.message }) }
+    catch (err) { return res.status(500).send({ status: false, message: err.message }) }
 }
 
 const deleteCart = async (req, res) => {
@@ -196,7 +195,7 @@ const deleteCart = async (req, res) => {
                 items.shift(items[i])
 
             }
-            console.log(items)
+            
         }
 
         totalPrice = cartData.totalPrice == 0
@@ -205,7 +204,7 @@ const deleteCart = async (req, res) => {
         const deleteCart = await cartModel.findOneAndUpdate({ userId: userId },
             { $set: { items: cartData.items, totalPrice: totalPrice, totalItems: totalItems } }, { new: true })
 
-        return res.status(204).send({ status: true, message: "Cart has been deleted", data: deleteCart })
+        return res.status(200).send({ status: true, message: "cart has been deleted", data: deleteCart })
     }
     catch (err) {
         res.status(500).send({ status: false, message: err.message })

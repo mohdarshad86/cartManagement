@@ -30,7 +30,6 @@ const createOrder = async (req, res) => {
 
         let cartData = await cartModel.findOne({ userId: userId, _id: cartId }).select({ _id: 0, userId: 1, items: 1, totalPrice: 1, totalItems: 1, totalQuantity: 1 }).lean();
 
-        console.log(cartData)
 
         if (!cartData) return res.status(404).send({ status: false, message: "No cart Found for this user" });
 
@@ -39,7 +38,7 @@ const createOrder = async (req, res) => {
 
         let quantity = 0;
         for (let i = 0; i < cartData.items.length; i++) {
-            quantity += cartData.items[i].quantity // quantity = 5+0 = 5, 1 = 5+1 =6
+            quantity += cartData.items[i].quantity 
         }
 
         let obj = {
@@ -53,7 +52,7 @@ const createOrder = async (req, res) => {
              {$set: { items: [], totalPrice:0, totalItems: 0 }} , { new: true })
 
           
-         return res.status(201).send({ status: false, message: 'Success', data: orderData });
+         return res.status(201).send({ status: true, message: "Success", data: orderData });
 
     }
     catch (err) { return res.status(500).send({ status: false, message: err.message }) }
@@ -116,7 +115,7 @@ const updateOrder = async (req, res) => {
 
     let updateOrders = await orderModel.findOneAndUpdate({ _id: orderId }, { status: checkOrder.status, cancellable: checkOrder.cancellable}, { new: true })
 
-    return res.status(200).send({ status: false, message: 'Success', data: updateOrders })
+    return res.status(200).send({ status: true, message: 'Success', data: updateOrders })
         
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
