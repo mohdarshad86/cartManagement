@@ -53,7 +53,7 @@ const createOrder = async (req, res) => {
              {$set: { items: [], totalPrice:0, totalItems: 0 }} , { new: true })
 
           
-         return res.status(201).send({ status: false, data: orderData });
+         return res.status(201).send({ status: false, message: 'Success', data: orderData });
 
     }
     catch (err) { return res.status(500).send({ status: false, message: err.message }) }
@@ -116,7 +116,7 @@ const updateOrder = async (req, res) => {
 
     let updateOrders = await orderModel.findOneAndUpdate({ _id: orderId }, { status: checkOrder.status, cancellable: checkOrder.cancellable}, { new: true })
 
-    return res.status(200).send({ status: false, data: updateOrders })
+    return res.status(200).send({ status: false, message: 'Success', data: updateOrders })
         
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })

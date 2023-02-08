@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt')
 const validation = require("../validations/validation");
 
 const register = async (req, res) => {
-
   try {
     let userData = req.body;
 
@@ -265,9 +264,9 @@ const register = async (req, res) => {
     //AWS
     userData.profileImage = req.image;
 
-    const usercreated = await userModel.create(userData);
+    const userCreated = await userModel.create(userData);
 
-    return res.status(201).send({ status: true, data: usercreated });
+    return res.status(201).send({ status: true, message: "User created successfully", data: userCreated });
   } catch (error) {
     console.log(error.message);
     return res.status(500).send({ status: false, message: error.message });
@@ -331,7 +330,7 @@ const loginUser = async (req, res) => {
 
     res.setHeader('x-api-key', token)
 
-    return res.status(200).send({ status: true, message: "User login successfully", data: tokenInfo });
+    return res.status(200).send({ status: true, message: "User login successfull", data: tokenInfo });
 
   } catch (err) {
     return res.status(500).send({ status: false, error: err.message });

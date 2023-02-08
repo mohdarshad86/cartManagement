@@ -36,7 +36,7 @@ const validatePincode = (pincode) => {
 };
 
 const validateTitle = (title) => {
-  return /^[A-Z](?=.{1,15}$)[a-z]+(?:['_.\s][a-z]+)*$/.test(title) // 1 character Caps , range - 1-15
+  return /^([a-zA-Z\d ]){2,30}$/.test(title) 
 }
 
 const validatePrice = (price) => {

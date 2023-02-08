@@ -53,7 +53,7 @@ const createCart = async function (req, res) {
 
                     let updateCart = await cartModel.findOneAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
 
-                    return res.status(200).send({ status: true, data: updateCart })
+                    return res.status(200).send({ status: true, message: 'Success', data: updateCart })
                 }
             }
 
@@ -67,7 +67,7 @@ const createCart = async function (req, res) {
             totalItem = cartExist.items.length
 
             let newCart = await cartModel.findByIdAndUpdate({ _id: cartId }, { items: productPresent, totalPrice: price, totalItems: totalItem }, { new: true })
-            return res.status(200).send({ status: true, data: newCart })
+            return res.status(200).send({ status: true,message: 'Success', data: newCart })
         }
 
         let items = {
@@ -82,7 +82,7 @@ const createCart = async function (req, res) {
         
         let cart = await cartModel.create({ userId: userId, items: items, totalPrice: totalPrice, totalItems: 1 })
 
-        return res.status(201).send({ status: true, data: cart })
+        return res.status(201).send({ status: true,message: 'Success', data: cart })
     } catch (err) {
         return res.status(500).send({ status: false, message: err.message })
     }
@@ -170,7 +170,7 @@ const getCart = async (req, res) => {
 
         let cartSummary = await cartModel.findOne({ userId: userId })
         if (!cartSummary) return res.status(404).send({ status: false, message: "Your cart is empty" })
-        res.status(200).send({ status: true, data: cartSummary })
+        res.status(200).send({ status: true,message: 'Success', data: cartSummary })
     }
     catch (err) { res.status(500).send({ status: false, message: err.message }) }
 }
@@ -205,7 +205,7 @@ const deleteCart = async (req, res) => {
         const deleteCart = await cartModel.findOneAndUpdate({ userId: userId },
             { $set: { items: cartData.items, totalPrice: totalPrice, totalItems: totalItems } }, { new: true })
 
-        return res.status(200).send({ status: false, message: "cart has been deleted", data: deleteCart })
+        return res.status(204).send({ status: true, message: "Cart has been deleted", data: deleteCart })
     }
     catch (err) {
         res.status(500).send({ status: false, message: err.message })

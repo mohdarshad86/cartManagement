@@ -7,7 +7,6 @@ const orderController=require('../controllers/orderController')
 const auth = require('../middlewares/auth')
 const aws = require("../middlewares/awsLink");
 
-
 //USER
 router.post("/register",aws.awsLink,  userController.register);
 router.post("/login", userController.loginUser)
