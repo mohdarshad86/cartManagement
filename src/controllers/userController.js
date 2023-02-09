@@ -21,6 +21,7 @@ const register = async (req, res) => {
     }
     if (count > 0)
       return res.status(400).send({ status: false, message: "queries can only have fname, lname, email, profileImage, phone, password, address" });
+
     //============ fname====================
 
     if (!fname)
@@ -79,8 +80,8 @@ const register = async (req, res) => {
 
     if (typeof password != "string")
       return res.status(400).send({ status: false, message: "please provide password in string " });
-    password = userData.password = password.trim();
 
+    password = userData.password = password.trim();
     if (password == "")
       return res.status(400).send({ status: false, message: "Please provide password value" });
 
@@ -115,7 +116,6 @@ const register = async (req, res) => {
 
       if (userExist.phone == phone)
         return res.status(400).send({ status: false, message: "phone  already exist" });
-
     }
 
 
@@ -124,7 +124,8 @@ const register = async (req, res) => {
       return res.status(400).send({ status: false, message: "Address is mandatory " });
 
     try {
-      address = userData.address = address.trim();
+      if (typeof address == 'string') address = userData.address = address.trim();
+
       if (address == "")
         return res.status(400).send({ status: false, message: "Please enter address value" });
 
@@ -263,7 +264,7 @@ const register = async (req, res) => {
           status: false, message: "Please provide billing pincode value",
         })
       }
-      if (!validation.validatePincode(address.shipping.pincode)) { return res.status(400).send({ status: false, message: "please provide valid shipping pincode" }) }
+      if (!validation.validatePincode(address.shipping.pincode)) return res.status(400).send({ status: false, message: "please provide valid shipping pincode" })
     } catch (error) {
       return res.status(400).send({ status: false, message: `There is a Syntax Error in request body, ${error.message}` })
     }
@@ -327,18 +328,17 @@ const loginUser = async (req, res) => {
 
     //       
 
-    let isUserExist = await userModel.findOne({
-      email: email
-    });
+    let isUserExist = await userModel.findOne({ email: email });
 
     if (!isUserExist)
       return res.status(404).send({ status: false, message: "No user found with given Email", });
-
+    //Decrypt
     let passwordCompare = await bcrypt.compare(password, isUserExist.password);
+
     if (!passwordCompare) return res.status(400).send({ status: false, message: "Please enter valid password" })
 
     let token = jwt.sign(
-      { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 12000000 },
+      { userId: isUserExist._id, exp: Math.floor(Date.now() / 1000) + 86400 },
       "project5"
     );
 
@@ -376,7 +376,6 @@ const getUser = async function (req, res) {
 }
 
 const UpdateUser = async function (req, res) {
-
   try {
     const userId = req.params.userId
     let userData = req.body
@@ -400,7 +399,7 @@ const UpdateUser = async function (req, res) {
       return res.status(400).send({ status: false, message: "Please provide some data to update" })
     }
 
-    let expectedQueries = ["fname", "lname", "email", "phone",'profileImage', "password", "address"];
+    let expectedQueries = ["fname", "lname", "email", "phone", 'profileImage', "password", "address"];
     let queries = Object.keys(userData);
     let count = 0;
     for (let i = 0; i < queries.length; i++) {
@@ -538,14 +537,14 @@ const UpdateUser = async function (req, res) {
 
             if (address.billing.city) {
 
-              if (typeof address.billing.city != "string") 
-                return res.status(400).send({ status: false, message: "shipping city will be in string ", });             
+              if (typeof address.billing.city != "string")
+                return res.status(400).send({ status: false, message: "shipping city will be in string ", });
 
               address.city = userData.address.billing.city = address.billing.city.trim();
 
-              if (address.billing.city == "") 
+              if (address.billing.city == "")
                 return res.status(400).send({ status: false, message: "Please provide shipping city value", })
-              
+
             }
             // ======================pincode 
 

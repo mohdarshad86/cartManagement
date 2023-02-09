@@ -48,6 +48,10 @@ const validateInstallments = (installment) => {
   return /^(0(?!)|[1-9]\d{0,1})$/.test(installment)
 }
 
+const validateStyle = (style) =>{
+  return /^[a-z A-Z]+$/.test(style) 
+}
+
 
 module.exports = {
   validateName,
@@ -58,5 +62,6 @@ module.exports = {
   validatePlace,
   validateTitle,
   validatePrice,
-  validateInstallments
+  validateInstallments,
+  validateStyle
 };

@@ -164,10 +164,9 @@ const createProduct = async (req, res) => {
 
             installments = productData.installments = Number(installments)
 
-            if (typeof installments != "number") return res.status(400).send({ status: false, message: "installments should be in number" });
+            if (isNaN(installments) || typeof installments != "number") return res.status(400).send({ status: false, message: "installments should be in number" });
 
             if (!isValid.validateInstallments(installments)) return res.status(400).send({ status: false, message: "please provide valid installment" })
-
         }
 
         let createProduct = await productModel.create(productData)
@@ -183,8 +182,8 @@ const getProduct = async (req, res) => {
         let data = req.query
         let { size, name, priceGreaterThan, priceLessThan, priceSort } = data
 
-        let abc = Object.keys(data)
-        for (i of abc) {
+        let checkEmpty = Object.keys(data)
+        for (i of checkEmpty) {
             if (data[i].trim() == "")
                 return res.status(400).send({ status: false, message: `${i} can not be Empty` })
         }
@@ -250,9 +249,8 @@ const getProduct = async (req, res) => {
             priceSort = data.priceSort = priceSort.trim()
             priceSort = data.priceSort = Number(priceSort)
 
-            if (isNaN(priceSort) || priceSort !== 1 && priceSort !== (-1)) {
+            if (isNaN(priceSort) || priceSort !== 1 && priceSort !== (-1))
                 return res.status(404).send({ status: false, message: "sortPrice can only contain +1(Ascending) & -1(Descending)" })
-            }
 
             sort = priceSort
         }
@@ -312,7 +310,7 @@ const updateProduct = async (req, res) => {
             data.productImage = "Image"
         }
 
-        let expectedQueries = ["title", "description", "price", "style", "availableSizes","productImage", "installments", "isFreeShipping"];
+        let expectedQueries = ["title", "description", "price", "style", "availableSizes", "productImage", "installments", "isFreeShipping"];
         let queries = Object.keys(data);
         let count = 0;
         for (let i = 0; i < queries.length; i++) {
@@ -320,9 +318,9 @@ const updateProduct = async (req, res) => {
         }
         if (count > 0)
             return res.status(400).send({ status: false, message: "queries can only have title, description, price, style, availableSizes,productImage, installments, isFreeShipping " });
-        if (Object.keys(data).length == 0) {
+
+        if (Object.keys(data).length == 0) 
             return res.status(400).send({ status: false, message: "Please provide some value" })
-        }
 
         if (!isValidObjectId(productId))
             return res.status(400).send({ status: false, message: "Invalid product Id " })
@@ -330,7 +328,7 @@ const updateProduct = async (req, res) => {
         const getProducts = await productModel.findOne({ _id: productId, isDeleted: false })
 
         if (!getProducts)
-            return res.status(404).send({ status: false, message: "No product found" })
+            return res.status(404).send({ status: false, message: "No product found for this UserId" })
 
         if (title) {
             if (typeof title != "string") {
@@ -348,18 +346,25 @@ const updateProduct = async (req, res) => {
         if (description) {
             if (typeof description != "string")
                 return res.status(400).send({ status: false, message: "description should be in string" });
+
+                description = productData.description = description.trim();
+
+                if (description == "")
+                    return res.status(400).send({ status: false, message: "Please Enter description value" });
+
+                if (!isValid.validateTitle(description))
+            return res.status(400).send({ status: false, message: "Please Enter  valid description" });
         }
 
         //=============================== price validation =============
 
         if (price) {
-            price = data.price = Number(price)
+           if(typeof price == 'string') price = data.price = Number(price)
 
             if (isNaN(price) || typeof price != "number") return res.status(400).send({ status: false, message: "price should be in number" });
 
             if (!isValid.validatePrice(price)) return res.status(400).send({ status: false, message: "please provide valid price" })
             price = data.price = price.toFixed(2)
-
         }
 
         //========================= productImage ========
