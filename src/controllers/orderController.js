@@ -21,7 +21,7 @@ const createOrder = async (req, res) => {
         if (count > 0) return res.status(400).send({ status: false, message: "queries can only have cartId, cancellable" });
 
         if (cancellable) {
-            console.log("yes")
+            
             // if(Object.values(cancellable)=="") return res.status(400).send({ status: false, message: "Please Enter cancellable value" });
             if (typeof cancellable == "string") {
                 cancellable = data.cancellable = cancellable.trim()
@@ -49,7 +49,7 @@ const createOrder = async (req, res) => {
         for (let i = 0; i < cartData.items.length; i++) {
             quantity += cartData.items[i].quantity
         }
-        console.log(cancellable,1)
+    
         let orderObject = {
             ...cartData,
             totalQuantity: quantity,
@@ -58,7 +58,6 @@ const createOrder = async (req, res) => {
         await cartModel.findOneAndUpdate({ userId: userId }, { $set: { items: [], totalPrice: 0, totalItems: 0 } }, { new: true })
 
         let orderData = await orderModel.create(orderObject);
-        console.log(cancellable,2)
 
         return res.status(201).send({ status: true, message: "Success", data: orderData });
 

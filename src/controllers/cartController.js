@@ -15,9 +15,9 @@ const createCart = async function (req, res) {
 
         if (cartId) {
             cartId = cartData.cartId= cartId.trim();
-            if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: " Valid CartID!" })
+            if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: " Invalid CartID!" })
             var cartExist = await cartModel.findOne({ _id: cartId, userId: userId })
-            if (!cartExist) return res.status(404).send({ status: false, message: "No cart found" })
+            if (!cartExist) return res.status(404).send({ status: false, message: "No cart found for this cartId" })
         }
       
         if (!productId) return res.status(400).send({ status: false, message: "Product id is mandatory " })
@@ -26,7 +26,7 @@ const createCart = async function (req, res) {
         if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: " Invalid product ID!" })
 
         let product = await productModel.findOne({ _id: productId, isDeleted: false })
-        if (!product) return res.status(400).send({ status: false, message: "Product doesn't exists!" })
+        if (!product) return res.status(400).send({ status: false, message: "Product doesn't exists for this product Id!" })
 
         if (cartData.quantity == 0) return res.status(400).send({ status: false, message: "You can't add 0 quantity of any item in your cart" })
         if (!cartData.quantity) {
@@ -204,7 +204,7 @@ const deleteCart = async (req, res) => {
         const deleteCart = await cartModel.findOneAndUpdate({ userId: userId },
             { $set: { items: cartData.items, totalPrice: totalPrice, totalItems: totalItems } }, { new: true })
 
-        return res.status(200).send({ status: true, message: "cart has been deleted", data: deleteCart })
+        return res.status(204).send({ status: true, message: "cart has been deleted", data: deleteCart })
     }
     catch (err) {
         res.status(500).send({ status: false, message: err.message })
