@@ -151,8 +151,8 @@ const updateCart = async (req, res) =>{
             isCartExist.items.splice(isMatchProductId, 1)
         }
 
-        let save = await cartModel.findOneAndUpdate({ _id: cartId }, { items: isCartExist.items, totalPrice: totalPrice, totalItems: totalItems }, { new: true })
-        return res.status(200).send({ status: true, message: 'Success', data: save })
+        let updatedCart = await cartModel.findOneAndUpdate({ _id: cartId }, { items: isCartExist.items, totalPrice: totalPrice, totalItems: totalItems }, { new: true })
+        return res.status(200).send({ status: true, message: 'Success', data: updatedCart })
 
     } catch (error) {
         return res.status(500).send({ status: false, message: error.message })
@@ -210,6 +210,5 @@ const deleteCart = async (req, res) => {
         res.status(500).send({ status: false, message: err.message })
     }
 }
-
 
 module.exports = { createCart, updateCart, getCart, deleteCart }
