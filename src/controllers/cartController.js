@@ -146,9 +146,9 @@ const updateCart = async (req, res) =>{
         }
 
         if (removeProduct == 0) {
-            isCartExist.items.splice(isMatchProductId, 1)
             totalItems = isCartExist.totalItems - 1
             totalPrice = isCartExist.totalPrice - (product.price * isCartExist.items[isMatchProductId].quantity)
+            isCartExist.items.splice(isMatchProductId, 1)
         }
 
         let save = await cartModel.findOneAndUpdate({ _id: cartId }, { items: isCartExist.items, totalPrice: totalPrice, totalItems: totalItems }, { new: true })

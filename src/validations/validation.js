@@ -1,7 +1,7 @@
 //Name
 
 const validateName = (name) => {
-  return /^[A-Z]{1}([a-zA-Z ]){2,30}$/.test(name);
+  return /^([a-zA-Z ]){2,30}$/.test(name);
 };
 
 // Email

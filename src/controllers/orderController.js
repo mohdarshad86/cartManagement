@@ -9,12 +9,12 @@ const createOrder = async (req, res) => {
         if (!isValidObjectId(userId)) return res.status(400).send({ status: false, message: "provide valid user id " });
 
         let data = req.body
-        let { cartId } = data;
+        let { cartId, cancellable } = data;
 
         if(cancellable){
             if(typeof cancellable == "string") {
             if(cancellable == "true" || cancellable == "false")  cancellable = JSON.parse(cancellable)
-           else return res.status(400).send({ status: false, message: "chal chal apne bap ko mat sikha" });
+           else return res.status(400).send({ status: false, message: "Please send valid cancellable" });
        }
     }
 
@@ -93,13 +93,15 @@ const updateOrder = async (req, res) => {
 
     let checkOrder = await orderModel.findById(orderId)
 
-    if(!checkOrder) return 
+    if(!checkOrder) return res.status(400).send({ status: false, message: "This order is not present" })
+
     if (checkOrder.userId != userId) return res.status(400).send({ status: false, message: "user is not applicable for this order" })
 
     if (checkOrder.status == 'completed') return res.status(400).send({ status: false, message: "This order is already completed" })
  
     if (checkOrder.status == 'cancelled') return res.status(400).send({ status: false, message: "This order is already cancelled" })
 
+    //check it carefully
     if (status == 'pending') return res.status(400).send({ status: false, message: "This order is already pending" })
 
     if (status == 'completed' ) {
