@@ -10,7 +10,7 @@ const cartSchema = new mongoose.Schema(
             productId: {
                 type: ObjectId,
                 required: true,
-                // unique: true
+                unique: true
             },
             quantity: {
                 type: Number,
@@ -20,16 +20,13 @@ const cartSchema = new mongoose.Schema(
         }],
         totalPrice: {
             type: Number,
-            // required: true
+            required: true
         },
         totalItems: {
             type: Number,
-            // required: true
+            required: true
         },
-        // isDeleted:{
-        //     type:Boolean,
-        //     default:false
-        // }
+        
     }, { timestamps: true })
 
 

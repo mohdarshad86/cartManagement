@@ -17,7 +17,7 @@ const productSchema = mongoose.Schema(
         price: {
             type: Number,
             required: true,
-        }, //valid number/decimal
+        }, 
 
         currencyId: {
             type: String,
@@ -28,7 +28,7 @@ const productSchema = mongoose.Schema(
         currencyFormat: {
             type: String,
             required: true
-        }, // Rupee symbol
+        }, 
 
         isFreeShipping: {
             type: Boolean,
@@ -38,7 +38,7 @@ const productSchema = mongoose.Schema(
         productImage: {
             type: String,
             required: true
-        }, // s3 link
+        }, 
 
         style: {
             type: String
@@ -47,7 +47,7 @@ const productSchema = mongoose.Schema(
         availableSizes: {
             type: [String],
             enum: ["S", "XS", "M", "X", "L", "XXL", "XL"],
-        }, //array of string, at least one size
+        }, 
 
         installments: {
             type: Number
@@ -55,7 +55,7 @@ const productSchema = mongoose.Schema(
 
         deletedAt: {
             type: Date
-        }, //when the document is deleted
+        },
 
         isDeleted: {
             type: Boolean,

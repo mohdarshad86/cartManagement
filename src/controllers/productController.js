@@ -128,7 +128,7 @@ const createProduct = async (req, res) => {
                 else return res.status(400).send({ status: false, message: "Please provide value either true or false" });
             }
         }
-        //=======================availableSizes: {array of string, at least one size, enum["S", "XS","M","X", "L","XXL", "XL"]}
+        //=======================availableSizes:
 
         if (availableSizes) {
             let count = 0;
@@ -265,7 +265,6 @@ const getProduct = async (req, res) => {
         return res.status(500).send({ status: false, message: error.message })
     }
 }
-//completed
 
 const getProductById = async (req, res) => {
     try {
@@ -286,7 +285,6 @@ const getProductById = async (req, res) => {
         return res.status(500).send({ status: false, message: err.message })
     }
 }
-
 
 const updateProduct = async (req, res) => {
 

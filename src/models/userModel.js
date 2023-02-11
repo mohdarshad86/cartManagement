@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-
     fname: {
         type: String,
         required: true,
@@ -20,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,
-        // required: true,
+        required: true,
         trim: true
     },
     phone: {
@@ -35,7 +34,7 @@ const userSchema = new mongoose.Schema({
         trim: true,
         min: 8,
         max: 15
-    }, // encrypted password
+    }, 
     address: {
         shipping: {
             street: {

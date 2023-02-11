@@ -44,7 +44,6 @@ const createCart = async function (req, res) {
                     let index = i
                     let updatedproduct = productPresent[i]
                     updatedproduct.quantity += quantity
-                    // At position index, add 1 elements, remove 1:
                     productPresent.splice(index, 1, updatedproduct)
 
                     price = cartExist.totalPrice + (product.price * quantity)

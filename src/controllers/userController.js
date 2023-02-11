@@ -112,10 +112,10 @@ const register = async (req, res) => {
 
     if (userExist) {
       if (userExist.email == email)
-        return res.status(400).send({ status: false, message: "email id  already exist" });
+        return res.status(400).send({ status: false, message: "email id  already exist, send another email" });
 
       if (userExist.phone == phone)
-        return res.status(400).send({ status: false, message: "phone  already exist" });
+        return res.status(400).send({ status: false, message: "phone  already exist, send another phone number" });
     }
 
 
@@ -332,7 +332,7 @@ const loginUser = async (req, res) => {
 
     if (!isUserExist)
       return res.status(404).send({ status: false, message: "No user found with given Email", });
-    //Decrypt
+    
     let passwordCompare = await bcrypt.compare(password, isUserExist.password);
 
     if (!passwordCompare) return res.status(400).send({ status: false, message: "Please enter valid password" })
@@ -570,7 +570,6 @@ const UpdateUser = async function (req, res) {
       }
     }
 
-    // profile image
     profileImage = userData.profileImage = req.image
 
     const updatedUser = await userModel.findByIdAndUpdate({ _id: userId },

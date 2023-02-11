@@ -55,6 +55,7 @@ const createOrder = async (req, res) => {
             totalQuantity: quantity,
             cancellable: cancellable
         };
+
         await cartModel.findOneAndUpdate({ userId: userId }, { $set: { items: [], totalPrice: 0, totalItems: 0 } }, { new: true })
 
         let orderData = await orderModel.create(orderObject);
@@ -89,8 +90,6 @@ const updateOrder = async (req, res) => {
         if (orderId == "") return res.status(400).send({ status: false, message: "Please enter orderId value" });
         if (!isValidObjectId(orderId)) return res.status(400).send({ status: false, message: "provide valid cart id " });
 
-
-        //pending, completed, cancelled
         if (!status) return res.status(400).send({ status: false, message: "Please provide status to update" });
         status = data.status = status.trim()
         if (status == "") return res.status(400).send({ status: false, message: "Please provide status value" });
